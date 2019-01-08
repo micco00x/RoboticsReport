@@ -13,7 +13,7 @@
 %	linkcolor=blue,        % color of internal links
 %	citecolor=blue,        % color of links to bibliography
 %	filecolor=magenta,     % color of file links
-%	urlcolor=blue         
+%	urlcolor=blue
 %}
 %++++++++++++++++++++++++++++++++++++++++
 \usepackage{indentfirst}
@@ -60,7 +60,7 @@ it moves around the environment. Let $\mathcal{F}_s$ be the
 support foot frame with respect to the world frame and let
 $\bm{o}_s$ be the its orientation.
 Let $\bm{J}(\bm{q}_s, \bm{o}_s)$ the Jacobian
-matrix of the kinematic map from the support frame 
+matrix of the kinematic map from the support frame
 $\mathcal{F}_s$ to the torso frame $\mathcal{F}_t$.
 Let's use the following kinematic model to describe the
 evolution of the state $\bm{x}$ through time:
@@ -77,7 +77,7 @@ position of $\mathcal{F}_s$:
     \bm{f}(\bm{q}_s, \bm{o}_s) &= \bm{\varOmega} \left(
         \begin{bmatrix}
             \bm{R}_z(\bm{o}_s) & \bm{0} \\
-            \bm{0}^T & 1 
+            \bm{0}^T & 1
         \end{bmatrix}
         \bm{\varOmega}^{-1}\left(
         \begin{bmatrix}
@@ -86,55 +86,55 @@ position of $\mathcal{F}_s$:
         \end{bmatrix}
         \right)
         \right) \\
-        &= \bm{\varOmega} \left(
-        \begin{bmatrix}
-            \bm{R}_z(\bm{o}_s) & \bm{0} \\
-            \bm{0}^T & 1 
-        \end{bmatrix}
-         \begin{bmatrix}
-            \tensor[^s]{\bm{R}}{_t}(\tensor[^s]{\bm{o}}{_t}) & \tensor[^s]{\bm{p}}{_t} \\
-            \bm{0}^T & 1 
-        \end{bmatrix}
-        \right) \\
-        &= \bm{\varOmega} \left(
-        \begin{bmatrix}
-            \bm{R}_z(\bm{o}_s) \tensor[^s]{\bm{R}}{_t}(\tensor[^s]{\bm{o}}{_t}) & \bm{R}_z(o_s) \tensor[^s]{\bm{p}}{_t}  \\
-            \bm{0}^T & 1 
-        \end{bmatrix}
-        \right) \\
-        &= \bm{\varOmega} \left(
-        \begin{bmatrix}
-            \bm{R}_z(\bm{o}_s) \bm{R}_z(\tensor[^s]{\bm{o}}{_{t,z}}) \bm{R}_y(\tensor[^s]{\bm{o}}{_{t,y}}) \bm{R}_x(\tensor[^s]{\bm{o}}{_{t,x}}) & \bm{R}_z(o_s) \tensor[^s]{\bm{p}}{_t}  \\
-            \bm{0}^T & 1 
-        \end{bmatrix}
-        \right) \\
+%        &= \bm{\varOmega} \left(
+%        \begin{bmatrix}
+%            \bm{R}_z(\bm{o}_s) & \bm{0} \\
+%            \bm{0}^T & 1
+%        \end{bmatrix}
+%         \begin{bmatrix}
+%            \tensor[^s]{\bm{R}}{_t}(\tensor[^s]{\bm{o}}{_t}) & \tensor[^s]{\bm{p}}{_t} \\
+%            \bm{0}^T & 1
+%        \end{bmatrix}
+%        \right) \\
+%        &= \bm{\varOmega} \left(
+%        \begin{bmatrix}
+%            \bm{R}_z(\bm{o}_s) \tensor[^s]{\bm{R}}{_t}(\tensor[^s]{\bm{o}}{_t}) & \bm{R}_z(o_s) \tensor[^s]{\bm{p}}{_t}  \\
+%            \bm{0}^T & 1
+%        \end{bmatrix}
+%        \right) \\
+%        &= \bm{\varOmega} \left(
+%        \begin{bmatrix}
+%            \bm{R}_z(\bm{o}_s) \bm{R}_z(\tensor[^s]{\bm{o}}{_{t,z}}) \bm{R}_y(\tensor[^s]{\bm{o}}{_{t,y}}) \bm{R}_x(\tensor[^s]{\bm{o}}{_{t,x}}) & \bm{R}_z(o_s) \tensor[^s]{\bm{p}}{_t}  \\
+%            \bm{0}^T & 1
+%        \end{bmatrix}
+%        \right) \\
         &= \bm{\varOmega} \left(
         \begin{bmatrix}
             \bm{R}_z(\bm{o}_s + \tensor[^s]{\bm{o}}{_{t,z}}) \bm{R}_y(\tensor[^s]{\bm{o}}{_{t,y}}) \bm{R}_x(\tensor[^s]{\bm{o}}{_{t,x}}) & \bm{R}_z(\bm{o}_s) \tensor[^s]{\bm{p}}{_t}  \\
-            \bm{0}^T & 1 
+            \bm{0}^T & 1
         \end{bmatrix}
-        \right) \\
-        &=
-        \begin{pmatrix}
-            \bm{R}_z(\bm{o}_s) \tensor[^s]{\bm{p}}{_t} \\
-            \tensor[^s]{\bm{o}}{_{t,x}} \\
-            \tensor[^s]{\bm{o}}{_{t,y}} \\
-            \bm{o}_s + \tensor[^s]{\bm{o}}{_{t,z}}
-        \end{pmatrix} \\
-        &=
-        \begin{bmatrix}
-            \bm{R}_z(\bm{o}_s) & \bm{O} \\
-            \bm{O} & \bm{I}
-        \end{bmatrix}
-        \begin{pmatrix}
-            \tensor[^s]{\bm{p}}{_t} \\
-            \tensor[^s]{\bm{o}}{_t}
-        \end{pmatrix}
-        +
-        \begin{pmatrix}
-            \bm{0}_{5} \\
-            \bm{o}_s
-        \end{pmatrix} \\
+        \right) \numberthis \\
+%        &=
+%        \begin{pmatrix}
+%            \bm{R}_z(\bm{o}_s) \tensor[^s]{\bm{p}}{_t} \\
+%            \tensor[^s]{\bm{o}}{_{t,x}} \\
+%            \tensor[^s]{\bm{o}}{_{t,y}} \\
+%            \bm{o}_s + \tensor[^s]{\bm{o}}{_{t,z}}
+%        \end{pmatrix} \\
+%        &=
+%        \begin{bmatrix}
+%            \bm{R}_z(\bm{o}_s) & \bm{O} \\
+%            \bm{O} & \bm{I}
+%        \end{bmatrix}
+%        \begin{pmatrix}
+%            \tensor[^s]{\bm{p}}{_t} \\
+%            \tensor[^s]{\bm{o}}{_t}
+%        \end{pmatrix}
+%        +
+%        \begin{pmatrix}
+%            \bm{0}_{5} \\
+%            \bm{o}_s
+%        \end{pmatrix} \\
         &=
         \begin{bmatrix}
             \bm{R}_z(\bm{o}_s) & \bm{O} \\
@@ -145,20 +145,20 @@ position of $\mathcal{F}_s$:
         \begin{pmatrix}
             \bm{0}_{5} \\
             \bm{o}_s
-        \end{pmatrix} \numberthis \\
+        \end{pmatrix} \\
     \bm{J}(\bm{q}_s, \bm{o}_s) &= \frac{\partial \bm{f}(\bm{q}_s, \bm{o}_s)}{\partial \bm{q}_s} \\
-    &= 
-    \begin{bmatrix}
-            \bm{R}_z(\bm{o}_s) & \bm{O} \\
-            \bm{O} & \bm{I}
-    \end{bmatrix}
-    \frac{\partial \bm{f}(\bm{q}_s)}{\partial \bm{q}_s} \\
     &=
     \begin{bmatrix}
             \bm{R}_z(\bm{o}_s) & \bm{O} \\
             \bm{O} & \bm{I}
     \end{bmatrix}
-    \bm{J}(\bm{q}_s) \numberthis
+    \frac{\partial \bm{f}(\bm{q}_s)}{\partial \bm{q}_s} \numberthis \\
+    &=
+    \begin{bmatrix}
+            \bm{R}_z(\bm{o}_s) & \bm{O} \\
+            \bm{O} & \bm{I}
+    \end{bmatrix}
+    \bm{J}(\bm{q}_s)
 \end{align*}
 
 \noindent which definition is important for development purposes.
@@ -167,13 +167,14 @@ C++ implementation of the HRP4 kinematics. Note that, unless
 specified otherwise, $\bm{I} \in \mathbb{R}^{3 \times 3}$
 represents the identity matrix,
 $\bm{O} \in \mathbb{R}^{3 \times 3}$
-represents the zero matrix, while $\bm{0} \in \mathbb{R}^{3}$ 
+represents the zero matrix, while $\bm{0} \in \mathbb{R}^{3}$
 represents the zero vector. $\bm{\varOmega}$ is a function that
 returns a minimal representation of a transform function.
-In the C++ library \texttt{Eigen}, $\bm{\varOmega}$ is
-implemented
-with \texttt{t2v}, while $\bm{\varOmega}^{-1}$ is implemented
-with \texttt{v2t}.
+% NOTE: it is not an Eigen function
+%In the C++ library \texttt{Eigen}, $\bm{\varOmega}$ is
+%implemented
+%with \texttt{t2v}, while $\bm{\varOmega}^{-1}$ is implemented
+%with \texttt{v2t}.
 
 The robot is equipped with a RGBD camera and an IMU, used
 to measure the pose of the torso frame:
@@ -189,11 +190,14 @@ to measure the pose of the torso frame:
 In particular, the position $\bm{p}_t$ is computed by doing
 trilateration exploiting known position of the landmarks, while
 the orientation $\bm{o}_t$ is computed by simply integrating
-the data obtained from the IMU. Details are explained in
+the data obtained from the IMU. The measurements of the pose of the
+torso $\bm{y}$ depend on the estimation of the pose of the torso $\bm{x}$ and the
+configuration of the neck joints $\bm{q}_n$. Details are explained in
 subsections \ref{subsec:gyro-integration} and
-\ref{subsec:trilateration}. [TODO: ADD COMMENT ABOUT
-NOTATION OF $q_s$ AND $q_n$ WHICH IS CONSISTENT WITH
-THE PAPER BUT NOT ACTUALLY USED IN THE IMPLEMENTATION].
+\ref{subsec:trilateration}.
+Note that the notation $\bm{q}_s$ and $\bm{q}_n$ have been kept in order to
+be consistent with the main reference paper but are not actually used in
+the implementation. The whole configuration of the robot $\bm{q}$ is used instead.
 
 \subsection{Extended Kalman Filter}
 It is now possible to define a discrete-time stochastic system
@@ -256,7 +260,7 @@ estimate by computing:
 \noindent since the partial derivative of the observation
 function with respect to the state is the identity matrix:
 \begin{align}
-    \bm{H}_{k+1} = \frac{\partial \bm{h}}{\partial \bm{x}} \at[\bigg]{\bm{x}=\bm{\hat{x}}_{k+1|k}} 
+    \bm{H}_{k+1} = \frac{\partial \bm{h}}{\partial \bm{x}} \at[\bigg]{\bm{x}=\bm{\hat{x}}_{k+1|k}}
         = I
 \end{align}
 
@@ -267,10 +271,17 @@ The corrected covariance matrix is updated as well:
 \end{align}
 
 Note that, in our implementation, we defined the covariance
-matrices $\bm{V}$ and $\bm{W}$ as [TODO]:
+matrices $\bm{V}$ and $\bm{W}$ as:
 \begin{align}
-    \bm{V} &= \text{diag}\{\cdot\} \\
-    \bm{W} &= \text{diag}\{\cdot\}
+    \bm{V} &= \text{diag}\{5, 5, 5, 100, 100, 100 \} \cdot 10^{-6} \\
+    \bm{W} &= \text{diag}\{5, 5, 5, 5 \cdot 10^{-2}, 5 \cdot 10^{-2}, 5 \cdot 10^{-2} \}  \cdot 10^{-2}
+\end{align}
+
+\subsection{Accelerometer Integration}
+Considering constant acceleration in an interval $[t_k, t_{k+1})$:
+\begin{align}
+    v_{t, k+1} &= v_{t, k} + a_{t, k} T \\
+    p_{t, k+1} &= p_{t, k} + v_{t, k} T + \frac{1}{2} a_{t, k} T^2
 \end{align}
 
 \subsection{Gyroscope Integration}
@@ -292,12 +303,12 @@ reference frame of the torso, hence, it must be transformed to
 the reference frame of the world in order be able to perform the
 integration:
 \begin{equation}
-    \bm{\dot{o}}_{t,k} = [\tensor[]{\bm{T}}{_{RPY}}(\bm{\hat{x}}_{k+1|k})]^{-1} \tensor[^t]{\bm{\dot{o}}}{_{t,k}}
+    \bm{\dot{o}}_{t,k} = [\tensor[]{\bm{T}}{_{RPY}}(\bm{\hat{x}}_{k})]^{-1} \tensor[^t]{\bm{\dot{o}}}{_{t,k}}
 \end{equation}
 
 \noindent with:
 \begin{equation}
-    \tensor[]{\bm{T}}{_{RPY}}(\bm{\hat{x}}_{k+1|k}) =
+    \tensor[]{\bm{T}}{_{RPY}}(\bm{\hat{x}}_{k}) =
     \begin{pmatrix}
         cos(\beta) cos(\gamma) & -sin(\gamma) & 0 \\
         cos(\beta) sin(\gamma) &  cos(\gamma) & 0 \\
@@ -306,7 +317,7 @@ integration:
 \end{equation}
 
 \noindent where $\beta$ and $\gamma$ are, respectively,
-the pitch and the yaw angles of $\bm{\hat{x}}_{k+1|k}$.
+the pitch and the yaw angles of $\bm{\hat{x}}_{k}$.
 %\noindent where $\tensor[^w]{\bm{R}}{_t}(\bm{\hat{x}}_{k+1|k})$ represents
 %the rotation matrix
 %from the reference frame of the torso to the reference frame
@@ -358,7 +369,7 @@ between the considered point with the axes $x$ and $y$ of the
 camera frame. This results in a simple computation:
 \begin{align}
     \tensor[^{cam}]{x}{} = \frac{2 p_x - w}{w} \tensor[^{cam}]{z}{} \cdot tan\left(\frac{\phi}{2}\right) \\
-    \tensor[^{cam}]{y}{} = \frac{2 p_y - h}{h} \tensor[^{cam}]{z}{} \cdot tan\left(\frac{\phi}{2}\right) 
+    \tensor[^{cam}]{y}{} = \frac{2 p_y - h}{h} \tensor[^{cam}]{z}{} \cdot tan\left(\frac{\phi}{2}\right)
 \end{align}
 
 \noindent with $(\tensor[^{cam}]{x}{}, \tensor[^{cam}]{y}{},
@@ -403,7 +414,7 @@ clipped).
 Since the position of the spheres $(x_i, y_i, z_i)^T$ is known
 and it is possible
 to associate the distance $r_i$ to each sphere because of the
-unique color, the problem of finding the position of the 
+unique color, the problem of finding the position of the
 camera $\bm{p}_h$ is reduced to solving the following system of equations:
 \begin{equation}
     (p_{h,x} - x_i)^2 + (p_{h,y} - y_i)^2 + (p_{h,z} - z_i)^2 = r_i^2 \quad (i = 1, 2, \dots, n)
@@ -423,13 +434,13 @@ $\bm{Ax} = \bm{b}$, where:
         %    x - x_1 \\
         %    y - y_1 \\
         %    z - z_1
-        %\end{pmatrix}, \quad 
-        \bm{p}_h - 
+        %\end{pmatrix}, \quad
+        \bm{p}_h -
         \begin{pmatrix}
             x_1 \\
             y_1 \\
             z_1
-        \end{pmatrix}, \quad 
+        \end{pmatrix}, \quad
     \bm{b} = \begin{pmatrix}
             b_{21} \\
             b_{31} \\
@@ -448,15 +459,15 @@ $\bm{Ax} = \bm{b}$, where:
     %\begin{pmatrix}
     %    x \\
     %    y \\
-    %    z 
+    %    z
     %\end{pmatrix}
     \bm{p}_h
         =
-    \bm{x} + 
+    \bm{x} +
     \begin{pmatrix}
         x_1 \\
         y_1 \\
-        z_1 
+        z_1
     \end{pmatrix}
 \end{equation}
 
@@ -481,29 +492,19 @@ computation of the direct kinematics.
 \section{Experiments}
 [TODO: DIVIDE THIS SECTION IN SUBSECTIONS].
 
-Figures \ref{fig:comp-ground-truth-estimated-torso} and
-\ref{fig:diff_ground_truth_estimated_torso} for the
+Figures \ref{fig:comp-ground-truth-estimated-torso}
+%and \ref{fig:diff_ground_truth_estimated_torso}
+for the
 torso pose estimation (\texttt{simulationType = 1}) [TODO:
 ADD DESCRIPTION].
 
-[TODO: ADD FIGURES OF THE ROBOT FOLLOWING A STRAIGHT LINE].
-
-[TODO: DOUBLE CHECK THAT THE TORSO POSE ESTIMATION IS
-ACTUALLY USEFUL TO FOLLOW THE RIGHT TRAJECTORY].
-
-Figures \ref{fig:comp_estimated_torso_com} and \ref{fig:diff_estimated_torso_com} for the torso position
-estimate and the CoM. Is there actually a way to use this
-for the MPC loop closure? Note, moreover, that the
-implementation of the MPC is using the position of the
-CoM w.r.t. the reference frame of the support foot, which
-is independent from the pose of the torso.
-
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{images/comp_ground_truth_estimated_torso.jpg}
+    \includegraphics[width=\textwidth]{images/trilateration.png}
     \caption{Comparison of the pose of the torso estimated
         with the EKF (in red) with respect to the ground
-        truth (in green). $x$, $y$, $z$ stands for the position
+        truth (in green) when using trilateration and the data coming
+        from the gyroscope. $x$, $y$, $z$ stands for the position
         of the torso expressed in the reference frame of the
         world. $R$, $P$, $Y$ stands for the rotations roll,
         pitch, yaw around the respective axes of the
@@ -511,25 +512,67 @@ is independent from the pose of the torso.
     \label{fig:comp-ground-truth-estimated-torso}
 \end{figure}
 
+[TODO: DOUBLE CHECK THAT THE TORSO POSE ESTIMATION IS
+ACTUALLY USEFUL TO FOLLOW THE RIGHT TRAJECTORY]
+(figure \ref{fig:walk_to_desired_position}).
+
+Figure \ref{fig:comp_estimated_torso_com} %and \ref{fig:diff_estimated_torso_com}
+for the torso position
+estimate and the CoM. Is there actually a way to use this
+for the MPC loop closure? Note, moreover, that the
+implementation of the MPC is using the position of the
+CoM w.r.t. the reference frame of the support foot, which
+is independent from the pose of the torso.
+
+%\begin{figure}
+%    \centering
+%    \includegraphics[width=\textwidth]{images/diff_ground_truth_estimated_torso.jpg}
+%    \caption{Difference of the pose of the torso estimated
+%        with the EKF with respect to the ground
+%        truth. $x$, $y$, $z$ stands for the position
+%        of the torso expressed in the reference frame of the
+%        world. $R$, $P$, $Y$ stands for the rotations roll,
+%        pitch, yaw around the respective axes of the
+%        reference frame of the world.}
+%    \label{fig:diff_ground_truth_estimated_torso}
+%\end{figure}
+
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{images/diff_ground_truth_estimated_torso.jpg}
-    \caption{Difference of the pose of the torso estimated
-        with the EKF (in red) with respect to the ground
-        truth (in green). $x$, $y$, $z$ stands for the position
+    \includegraphics[width=\textwidth]{images/accelerometer.png}
+    \caption{Comparison between the ground truth (in green) and the estimation (in red) of the torso
+        pose when using a double integrator on the data of the accelerometer
+        and the gyroscope. $x$, $y$, $z$ stands for the position
         of the torso expressed in the reference frame of the
         world. $R$, $P$, $Y$ stands for the rotations roll,
         pitch, yaw around the respective axes of the
         reference frame of the world.}
-    \label{fig:diff_ground_truth_estimated_torso}
+    \label{fig:comp_ground_truth_estimated_torso_accelerometer}
 \end{figure}
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{images/comp_estimated_torso_com.jpg}
+    \includegraphics[width=\textwidth]{images/accelerometer_prev_linearvelocity.png}
+    \caption{Comparison between the ground truth (in green) and the estimation (in red) of the torso
+        pose when using a double integrator on the data of the accelerometer
+        and the gyroscope. Here the velocity is approximated with the velocity
+        of the previous step, which is in turn computed using the positions
+        coming from the EKF. This should give an idea about what happens if the
+        velocities are filtered as well. $x$, $y$, $z$ stands for the position
+        of the torso expressed in the reference frame of the
+        world. $R$, $P$, $Y$ stands for the rotations roll,
+        pitch, yaw around the respective axes of the
+        reference frame of the world.}
+    \label{fig:comp_ground_truth_estimated_torso_accelerometer_prevlinearvelocity}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/trilateration_com.png}
     \caption{Comparison of the position of the torso
         estimated
-        with the EKF (in red) with respect to the CoM (in green). $x$, $y$, $z$ stands for the position
+        with the EKF (in red) with respect to the CoM (in green) when using
+        trilateration and the gyroscope. $x$, $y$, $z$ stands for the position
         of the torso expressed in the reference frame of the
         world. $R$, $P$, $Y$ stands for the rotations roll,
         pitch, yaw around the respective axes of the
@@ -539,16 +582,13 @@ is independent from the pose of the torso.
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{images/diff_estimated_torso_com.jpg}
-    \caption{Difference of the position of the torso
-        estimated
-        with the EKF (in red) with respect to the CoM (in
-        green). $x$, $y$, $z$ stands for the position
-        of the torso expressed in the reference frame of the
-        world. $R$, $P$, $Y$ stands for the rotations roll,
-        pitch, yaw around the respective axes of the
-        reference frame of the world.}
-    \label{fig:diff_estimated_torso_com}
+    \includegraphics[width=\textwidth]{images/walk_to_desired_position.png}
+    \caption{Trajectory followed by the robot when walking to the desired position
+        $p_g = (-3, 5)$. Here the measurements of the Kalman filter are obtained
+        using the accelerometer and the gyroscope. In green the ground truth of the coordinates $(x, y)$ of the
+        robot, in red the estimate of the Kalman filter. The robot start at the
+        position $p_s$ and it stops at the position $p_f$.}
+    \label{fig:walk_to_desired_position}
 \end{figure}
 
 \section{Conclusions}
@@ -556,14 +596,15 @@ Summary of the project, possible future developments and
 conclusions.
 
 %++++++++++++++++++++++++++++++++++++++++
-% References section will be created automatically 
+% References section will be created automatically
 % with inclusion of "thebibliography" environment
 % as it shown below. See text starting with line
 % \begin{thebibliography}{99}
 % Note: with this approach it is YOUR responsibility to put them in order
 % of appearance.
 
-\bibliography{bibliography} 
+\clearpage
+\bibliography{bibliography}
 \bibliographystyle{ieeetr}
 
 %\begin{thebibliography}{99}
