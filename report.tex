@@ -187,14 +187,14 @@ to measure the pose of the torso frame:
     \label{eq:ekf-observation-function}
 \end{equation}
 
-In particular, the position $\bm{p}_t$ is computed by doing
-trilateration exploiting known position of the landmarks, while
+In particular, the position $\bm{p}_t$ is computed by doing either
+trilateration exploiting known position of the landmarks or integrating the
+data coming from the accelerometer, while
 the orientation $\bm{o}_t$ is computed by simply integrating
-the data obtained from the IMU. The measurements of the pose of the
+the data obtained from the gyroscope. The measurements of the pose of the
 torso $\bm{y}$ depend on the estimation of the pose of the torso $\bm{x}$ and the
 configuration of the neck joints $\bm{q}_n$. Details are explained in
-subsections \ref{subsec:gyro-integration} and
-\ref{subsec:trilateration}.
+subsections \ref{subsec:accelerometer-integration}--\ref{subsec:trilateration}.
 Note that the notation $\bm{q}_s$ and $\bm{q}_n$ have been kept in order to
 be consistent with the main reference paper but are not actually used in
 the implementation. The whole configuration of the robot $\bm{q}$ is used instead.
@@ -278,43 +278,80 @@ matrices $\bm{V}$ and $\bm{W}$ as:
 \end{align}
 
 \subsection{Accelerometer Integration}
-Considering constant acceleration in an interval $[t_k, t_{k+1})$:
+\label{subsec:accelerometer-integration}
+
+As said before, the measurement of the position of the torso $\bm{p}_t$ can be computed
+by either doing trilateration exploiting the known position of the landmarks or
+by integrating the data coming from the accelerometer. Let's discuss the second
+approach considering constant acceleration in an interval $[t_k, t_{k+1})$:
 \begin{align}
-    v_{t, k+1} &= v_{t, k} + a_{t, k} T \\
-    p_{t, k+1} &= p_{t, k} + v_{t, k} T + \frac{1}{2} a_{t, k} T^2
+    \bm{\dot{p}}_{t, k+1} &= \bm{\dot{p}}_{t, k} + \bm{\ddot{p}}_{t, k} T \\
+    \bm{p}_{t, k+1} &= \bm{p}_{t, k} + \bm{\dot{p}}_{t, k} T + \frac{1}{2} \bm{\ddot{p}}_{t, k} T^2
 \end{align}
 
-\subsection{Gyroscope Integration}
-\label{subsec:gyro-integration}
-Gyroscope integration (Euler).
+Note that the implementation of the accelerometer returns, at each timestep $k$,
+the linear acceleration $\tensor[^t]{\bm{a}}{_{t,k}}$ expressed in the
+current reference frame of the torso, hence, it must be transformed to the
+reference frame of the world in order be able to perform the integration:
 \begin{equation}
-    \bm{o}_{t,k+1} = \bm{o}_{t,k} + T \bm{\dot{o}}_{t,k}
-\end{equation}
-
-Gyroscope integration (Trapezoidal).
-\begin{equation}
-    \bm{o}_{t,k+1} = \bm{o}_{t,k} + T \frac{\bm{\dot{o}}_{t,k} + \bm{\dot{o}}_{t,k-1}}{2}
-\end{equation}
-
-Note that the implementation of the gyroscope returns, at each
-timestep $k$, the angular velocity
-$\tensor[^t]{\bm{\dot{o}}}{_{t,k}}$ expressed in the current
-reference frame of the torso, hence, it must be transformed to
-the reference frame of the world in order be able to perform the
-integration:
-\begin{equation}
-    \bm{\dot{o}}_{t,k} = [\tensor[]{\bm{T}}{_{RPY}}(\bm{\hat{x}}_{k})]^{-1} \tensor[^t]{\bm{\dot{o}}}{_{t,k}}
+    \bm{\ddot{p}}_{t,k} = \bm{R}(\bm{\hat{x}}_{k}) \tensor[^t]{\bm{a}}{_{t,k}}
 \end{equation}
 
 \noindent with:
 \begin{equation}
-    \tensor[]{\bm{T}}{_{RPY}}(\bm{\hat{x}}_{k}) =
+    \bm{R}(\bm{\hat{x}}_{k}) = \bm{R}_z(\gamma) \bm{R}_y(\beta) \bm{R}_x(\alpha)
+\end{equation}
+
+\noindent where $\alpha$, $\beta$ and $\gamma$ are, respectively,
+the roll, the pitch and the yaw angles of $\bm{\hat{x}}_{k}$.
+
+\subsection{Gyroscope Integration}
+\label{subsec:gyro-integration}
+In a similar way, the gyroscope data can be integrated to obtain the
+orientation of the robot $\bm{o}_t$ at each timestep. Considering a constant angular
+velocity in an interval $[t_k, t_{k+1})$:
+\begin{equation}
+    \bm{o}_{t,k+1} = \bm{o}_{t,k} + T \bm{\dot{o}}_{t,k}
+\end{equation}
+
+%Gyroscope integration (Trapezoidal).
+%\begin{equation}
+%    \bm{o}_{t,k+1} = \bm{o}_{t,k} + T \frac{\bm{\dot{o}}_{t,k} + \bm{\dot{o}}_{t,k-1}}{2}
+%\end{equation}
+
+Note that the implementation of the gyroscope returns, at each
+timestep $k$, the angular velocity
+$\tensor[^t]{\bm{\omega}}{_{t,k}}$ expressed in the current
+reference frame of the torso, hence, it must be transformed to
+the reference frame of the world in order be able to perform the
+integration:
+\begin{equation}
+    \bm{\dot{o}}_{t,k} = \bm{T}(\bm{\hat{x}}_{k}) \tensor[^t]{\bm{\omega}}{_{t,k}}
+\end{equation}
+
+\noindent with:
+\begin{equation}
+    \bm{T}(\bm{\hat{x}}_{k}) =
     \begin{pmatrix}
-        cos(\beta) cos(\gamma) & -sin(\gamma) & 0 \\
-        cos(\beta) sin(\gamma) &  cos(\gamma) & 0 \\
-        -sin(\beta) & 0 & 1
+        cos(\gamma)/cos(\beta) & sin(\gamma)/cos(\beta) & 0 \\
+        -sin(\gamma) &  cos(\gamma) & 0 \\
+        cos(\gamma) tan(\beta) & sin(\gamma) tan(\beta) & 1
     \end{pmatrix}
 \end{equation}
+
+%\begin{equation}
+%    \bm{\dot{o}}_{t,k} = [\tensor[]{\bm{T}}{_{RPY}}(\bm{\hat{x}}_{k})]^{-1} \tensor[^t]{\bm{\dot{o}}}{_{t,k}}
+%\end{equation}
+
+%\noindent with:
+%\begin{equation}
+%    \tensor[]{\bm{T}}{_{RPY}}(\bm{\hat{x}}_{k}) =
+%    \begin{pmatrix}
+%        cos(\beta) cos(\gamma) & -sin(\gamma) & 0 \\
+%        cos(\beta) sin(\gamma) &  cos(\gamma) & 0 \\
+%        -sin(\beta) & 0 & 1
+%    \end{pmatrix}
+%\end{equation}
 
 \noindent where $\beta$ and $\gamma$ are, respectively,
 the pitch and the yaw angles of $\bm{\hat{x}}_{k}$.
@@ -327,10 +364,6 @@ the pitch and the yaw angles of $\bm{\hat{x}}_{k}$.
 %reference frame of the torso at time $k$.
 
 \subsection{Trilateration}
-
-[TODO: DESCRIBE PROBLEMS WITH DOUBLE INTEGRATION OF THE
-ACCELEROMETER].
-
 \label{subsec:trilateration}
 Let's now discuss how
 trilateration\cite{trilateration-hereman-1995} can be used with
@@ -409,8 +442,6 @@ camera and the center of the sphere (e.g. when a sphere is
 only partially visible because occluded by another sphere or
 clipped).
 
-[TODO: SAY WHICH ARE THE VALUES USED IN THE IMPLEMENTATION].
-
 Since the position of the spheres $(x_i, y_i, z_i)^T$ is known
 and it is possible
 to associate the distance $r_i$ to each sphere because of the
@@ -471,13 +502,13 @@ $\bm{Ax} = \bm{b}$, where:
     \end{pmatrix}
 \end{equation}
 
-[TODO: DESCRIBE THE USE OF THE
-PSEUDOINVERSE (MINIMIZATION PROBLEM), THE MINIMUM NUMBER OF POINT (4) NEEDED TO DO TRILATERATION]
+%[TODO: DESCRIBE THE USE OF THE
+%PSEUDOINVERSE (MINIMIZATION PROBLEM), THE MINIMUM NUMBER OF POINT (4) NEEDED TO DO TRILATERATION]
 
 At this point, the position of the torso can be obtained by
 a simple transformation:
 \begin{equation}
-    \bm{p}_t = \bm{p}_h - \tensor[^w]{\bm{R}}{_t}(\bm{\hat{x}}_{k+1|k}) (\tensor[^t]{\bm{p}}{_h} - \tensor[^t]{\bm{p}}{_t})
+    \bm{p}_t = \bm{p}_h - \tensor[^w]{\bm{R}}{_t}(\bm{\hat{x}}_{k}) (\tensor[^t]{\bm{p}}{_h} - \tensor[^t]{\bm{p}}{_t})
 \end{equation}
 
 \noindent with $\tensor[^t]{\bm{p}}{_h} - \tensor[^t]{\bm{p}}{_t}$
@@ -489,28 +520,22 @@ computation of the direct kinematics.
 \section{MPC Loop Closure}
 [TODO: DESCRIPTION OF THE MPC AS DONE ABOVE WITH EKF].
 
+\section{Walking to a desired position}
+Todo.
+
 \section{Experiments}
+[TODO: DESCRIBE PROBLEMS WITH DOUBLE INTEGRATION OF THE
+ACCELEROMETER].
+
 [TODO: DIVIDE THIS SECTION IN SUBSECTIONS].
+
+[TODO: SAY WHICH ARE THE VALUES USED IN THE IMPLEMENTATION - CAMERA TRILATERATION].
 
 Figures \ref{fig:comp-ground-truth-estimated-torso}
 %and \ref{fig:diff_ground_truth_estimated_torso}
 for the
 torso pose estimation (\texttt{simulationType = 1}) [TODO:
 ADD DESCRIPTION].
-
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{images/trilateration.png}
-    \caption{Comparison of the pose of the torso estimated
-        with the EKF (in red) with respect to the ground
-        truth (in green) when using trilateration and the data coming
-        from the gyroscope. $x$, $y$, $z$ stands for the position
-        of the torso expressed in the reference frame of the
-        world. $R$, $P$, $Y$ stands for the rotations roll,
-        pitch, yaw around the respective axes of the
-        reference frame of the world.}
-    \label{fig:comp-ground-truth-estimated-torso}
-\end{figure}
 
 [TODO: DOUBLE CHECK THAT THE TORSO POSE ESTIMATION IS
 ACTUALLY USEFUL TO FOLLOW THE RIGHT TRAJECTORY]
@@ -568,6 +593,20 @@ is independent from the pose of the torso.
 
 \begin{figure}
     \centering
+    \includegraphics[width=\textwidth]{images/trilateration.png}
+    \caption{Comparison of the pose of the torso estimated
+        with the EKF (in red) with respect to the ground
+        truth (in green) when using trilateration and the data coming
+        from the gyroscope. $x$, $y$, $z$ stands for the position
+        of the torso expressed in the reference frame of the
+        world. $R$, $P$, $Y$ stands for the rotations roll,
+        pitch, yaw around the respective axes of the
+        reference frame of the world.}
+    \label{fig:comp-ground-truth-estimated-torso}
+\end{figure}
+
+\begin{figure}
+    \centering
     \includegraphics[width=\textwidth]{images/trilateration_com.png}
     \caption{Comparison of the position of the torso
         estimated
@@ -584,10 +623,10 @@ is independent from the pose of the torso.
     \centering
     \includegraphics[width=\textwidth]{images/walk_to_desired_position.png}
     \caption{Trajectory followed by the robot when walking to the desired position
-        $p_g = (-3, 5)$. Here the measurements of the Kalman filter are obtained
+        $\bm{p}_g = (-3, 5)$. Here the measurements of the Kalman filter are obtained
         using the accelerometer and the gyroscope. In green the ground truth of the coordinates $(x, y)$ of the
         robot, in red the estimate of the Kalman filter. The robot start at the
-        position $p_s$ and it stops at the position $p_f$.}
+        position $\bm{p}_s$ and it stops at the position $\bm{p}_f$.}
     \label{fig:walk_to_desired_position}
 \end{figure}
 
