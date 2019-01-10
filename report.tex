@@ -27,7 +27,7 @@
 
 \begin{document}
 
-\title{CoM Estimation on the HRP4 Humanoid\\(draft)}
+\title{Torso Pose Estimation on the\\HRP4 Humanoid Robot\\(draft)}
 \author{Michele Cipriano, Godwin Joey, Lorenzo Vianello\\Supervised by Nicola Scianca}
 \date{\today}
 \maketitle
@@ -524,6 +524,7 @@ computation of the direct kinematics.
 [TODO: DESCRIPTION OF THE MPC AS DONE ABOVE WITH EKF].
 
 \section{Posture Regulation}
+\label{section:posture_regulation}
 Another way to test the correctness of the EKF is to make the robot perform
 the posture regulation task, hence, make it move to a certain configuration
 $(x_g, y_g, \theta_g)^T$. Note that the problem can be simplified by
@@ -679,10 +680,12 @@ is independent from the pose of the torso.
     \centering
     \includegraphics[width=\textwidth]{images/posture_regulation.png}
     \caption{Trajectory followed by the robot when moving to a desired configuration
-        $\bm{q}_g = (-2, 3.2, \pi)$. Here the measurements of the Kalman filter are obtained
+        $\bm{q}_g = (-2, 3.2, \pi)$. Here, the measurements of the Kalman filter are obtained
         using the accelerometer and the gyroscope. In green the ground truth of the coordinates $(x, y)$ of the
         robot, in red the estimate of the EKF. The robot start at the
-        position $\bm{p}_s$ and it stops at the position $\bm{p}_f$.}
+        position $\bm{p}_s$ and it stops at the position $\bm{p}_f$. Note that,
+        as explained in section \ref{section:posture_regulation},
+        when $\rho_r < 0.2$, $v$ are $w$ are set to 0.}
     \label{fig:walk_to_desired_position}
 \end{figure}
 
@@ -690,7 +693,7 @@ is independent from the pose of the torso.
     \centering
     \includegraphics[width=\textwidth]{images/yaw_postureregulation.png}
     \caption{Orientation followed by the robot when moving to a desired configuration
-        $\bm{q}_g = (-2, 3.2, \pi)$. Here the measurements of the Kalman filter are obtained
+        $\bm{q}_g = (-2, 3.2, \pi)$. Here, the measurements of the Kalman filter are obtained
         using the accelerometer and the gyroscope. In green the ground truth of the coordinate $\theta$ of the
         robot (unicycle), in red the estimate of the EKF (note that they coincide
         for the whole path). In blue the desired final orientation $\theta_g = \pi$.}
@@ -700,13 +703,8 @@ is independent from the pose of the torso.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/unicycle_velocities.png}
-    \caption{Linear and angular velocity of the unicycle while performing
-        posture regulation.
-        TODO: Trajectory followed by the robot when walking to the desired position
-        $\bm{p}_g = (-2, 3.2)$. Here the measurements of the Kalman filter are obtained
-        using the accelerometer and the gyroscope. In green the ground truth of the coordinates $(x, y)$ of the
-        robot, in red the estimate of the EKF. The robot start at the
-        position $\bm{p}_s$ and it stops at the position $\bm{p}_f$.}
+    \caption{Linear and angular velocity of the HRP4 while performing
+        posture regulation.}
     \label{fig:unicycle_velocities}
 \end{figure}
 
