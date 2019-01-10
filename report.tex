@@ -42,6 +42,9 @@
 %discrepancy to low efficiency of our $V$-detector.
 %\end{abstract}
 
+\begin{abstract}
+Todo.
+\end{abstract}
 
 \section{Introduction}
 
@@ -55,10 +58,10 @@ Brief introduction to the section.
 \subsection{Kinematic Model}
 Let $\bm{x} = (\bm{p}_t^T, \bm{o}_t^T)^T$ be the pose of the torso frame $\mathcal{F}_t$
 with respect to the world frame $\mathcal{F}_w$. We want to
-develop a filter that estimates the state of $\bm{x}$ while
+develop a filter that estimates the state $\bm{x}$ while
 it moves around the environment. Let $\mathcal{F}_s$ be the
 support foot frame with respect to the world frame and let
-$\bm{o}_s$ be the its orientation.
+$\bm{o}_s$ be its orientation.
 Let $\bm{J}(\bm{q}_s, \bm{o}_s)$ the Jacobian
 matrix of the kinematic map from the support frame
 $\mathcal{F}_s$ to the torso frame $\mathcal{F}_t$.
@@ -261,7 +264,7 @@ estimate by computing:
 function with respect to the state is the identity matrix:
 \begin{align}
     \bm{H}_{k+1} = \frac{\partial \bm{h}}{\partial \bm{x}} \at[\bigg]{\bm{x}=\bm{\hat{x}}_{k+1|k}}
-        = I
+        = \bm{I}
 \end{align}
 
 The corrected covariance matrix is updated as well:
@@ -283,7 +286,7 @@ matrices $\bm{V}$ and $\bm{W}$ as:
 As said before, the measurement of the position of the torso $\bm{p}_t$ can be computed
 by either doing trilateration exploiting the known position of the landmarks or
 by integrating the data coming from the accelerometer. Let's discuss the second
-approach considering constant acceleration in an interval $[t_k, t_{k+1})$:
+approach considering constant acceleration $\bm{\ddot{p}}_{t, k}$ in an interval $[t_k, t_{k+1})$:
 \begin{align}
     \bm{\dot{p}}_{t, k+1} &= \bm{\dot{p}}_{t, k} + \bm{\ddot{p}}_{t, k} T \\
     \bm{p}_{t, k+1} &= \bm{p}_{t, k} + \bm{\dot{p}}_{t, k} T + \frac{1}{2} \bm{\ddot{p}}_{t, k} T^2
@@ -294,12 +297,12 @@ the linear acceleration $\tensor[^t]{\bm{a}}{_{t,k}}$ expressed in the
 current reference frame of the torso, hence, it must be transformed to the
 reference frame of the world in order be able to perform the integration:
 \begin{equation}
-    \bm{\ddot{p}}_{t,k} = \bm{R}(\bm{\hat{x}}_{k}) \tensor[^t]{\bm{a}}{_{t,k}}
+    \bm{\ddot{p}}_{t,k} = \tensor[^w]{\bm{R}}{_t}(\bm{\hat{x}}_{k}) \tensor[^t]{\bm{a}}{_{t,k}}
 \end{equation}
 
 \noindent with:
 \begin{equation}
-    \bm{R}(\bm{\hat{x}}_{k}) = \bm{R}_z(\gamma) \bm{R}_y(\beta) \bm{R}_x(\alpha)
+    \tensor[^w]{\bm{R}}{_t}(\bm{\hat{x}}_{k}) = \bm{R}_z(\gamma) \bm{R}_y(\beta) \bm{R}_x(\alpha)
 \end{equation}
 
 \noindent where $\alpha$, $\beta$ and $\gamma$ are, respectively,
@@ -323,7 +326,7 @@ Note that the implementation of the gyroscope returns, at each
 timestep $k$, the angular velocity
 $\tensor[^t]{\bm{\omega}}{_{t,k}}$ expressed in the current
 reference frame of the torso, hence, it must be transformed to
-the reference frame of the world in order be able to perform the
+the reference frame of the world in order to be able to perform the
 integration:
 \begin{equation}
     \bm{\dot{o}}_{t,k} = \bm{T}(\bm{\hat{x}}_{k}) \tensor[^t]{\bm{\omega}}{_{t,k}}
@@ -520,8 +523,61 @@ computation of the direct kinematics.
 \section{MPC Loop Closure}
 [TODO: DESCRIPTION OF THE MPC AS DONE ABOVE WITH EKF].
 
-\section{Walking to a desired position}
-Todo.
+\section{Posture Regulation}
+Another way to test the correctness of the EKF is to make the robot perform
+the posture regulation task, hence, make it move to a certain configuration
+$(x_g, y_g, \theta_g)^T$. Note that the problem can be simplified by
+modeling the robot as a unicycle and by considering its coordinates
+in a reference frame $\mathcal{F}_g$ fixed at a position $(x_g, y_g)^T$ and
+rotated by $\theta_g$ around the reference frame of the world. In this way, it is
+possible to express the generalized coordinates of the robot in $\mathcal{F}_g$
+by computing:
+\begin{equation}
+    \begin{pmatrix}
+        \tensor[^g]{x}{} \\
+        \tensor[^g]{y}{} \\
+        \tensor[^g]{\theta}{}
+    \end{pmatrix}
+        =
+    \bm{R}_z^T(\theta_g)
+    \begin{pmatrix}
+        x - x_g \\
+        y - y_g \\
+        \theta - \theta_g
+    \end{pmatrix}
+\end{equation}
+
+Let's define kinematic model of the unicycle using
+polar coordinates:
+\begin{align}
+    \dot{\rho}_r &= -v cos(\gamma_r) \\
+    \dot{\gamma}_r &= \frac{sin(\gamma_r)}{\rho}v - w \\
+    \dot{\delta}_r &= \frac{sin(\gamma_r)}{\rho}v
+\end{align}
+
+\noindent with $v$ and $w$ respectively linear and angular velocity of the
+unicycle. The polar coordinates can be obtained from the generalized
+coordinates of the unicycle $(x, y, \theta)^T$ by computing:
+\begin{align}
+    \rho_r &= \sqrt{\tensor[^g]{x}{^2} + \tensor[^g]{y}{^2}} \\
+    \gamma_r &= \text{Atan2}(\tensor[^g]{y}{}, \tensor[^g]{x}{}) - \tensor[^g]{\theta}{} + \pi \\
+    \delta_r &= \gamma_r + \tensor[^g]{\theta}{}
+\end{align}
+
+By considering the following control law:
+\begin{align}
+    v &= k_1 \rho_r cos(\gamma_r) \\
+    w &= k_2 \gamma_r + k_1 \frac{sin(\gamma_r) cos(\gamma_r)}{\gamma_r}(\gamma_r + k_3 \delta_r)
+\end{align}
+
+\noindent it is possible to prove\cite{Siciliano:2008:RMP:1524151}
+that $\rho_r$, $\gamma_r$ and $\delta_r$ converge to zero, which implies that
+the configuration of the unicycle $(x, y, \theta)^T$ converges to the desired
+configuration $(x_g, y_g, \theta_g)^T$.
+Of course, since the humanoid robot has an oscillatory motion due to the
+gait, we decided to set the velocities $v$ and $w$ to $0$ when the distance $\rho_r$
+from the desired position $(x_g, y_g)^T$ is less than a certain threshold (set
+to $0.2$ in our experiment).
 
 \section{Experiments}
 [TODO: DESCRIBE PROBLEMS WITH DOUBLE INTEGRATION OF THE
@@ -621,13 +677,37 @@ is independent from the pose of the torso.
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{images/walk_to_desired_position.png}
-    \caption{Trajectory followed by the robot when walking to the desired position
-        $\bm{p}_g = (-3, 5)$. Here the measurements of the Kalman filter are obtained
+    \includegraphics[width=\textwidth]{images/posture_regulation.png}
+    \caption{Trajectory followed by the robot when moving to a desired configuration
+        $\bm{q}_g = (-2, 3.2, \pi)$. Here the measurements of the Kalman filter are obtained
         using the accelerometer and the gyroscope. In green the ground truth of the coordinates $(x, y)$ of the
-        robot, in red the estimate of the Kalman filter. The robot start at the
+        robot, in red the estimate of the EKF. The robot start at the
         position $\bm{p}_s$ and it stops at the position $\bm{p}_f$.}
     \label{fig:walk_to_desired_position}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/yaw_postureregulation.png}
+    \caption{Orientation followed by the robot when moving to a desired configuration
+        $\bm{q}_g = (-2, 3.2, \pi)$. Here the measurements of the Kalman filter are obtained
+        using the accelerometer and the gyroscope. In green the ground truth of the coordinate $\theta$ of the
+        robot (unicycle), in red the estimate of the EKF (note that they coincide
+        for the whole path). In blue the desired final orientation $\theta_g = \pi$.}
+    \label{fig:walk_to_desired_position_yaw}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/unicycle_velocities.png}
+    \caption{Linear and angular velocity of the unicycle while performing
+        posture regulation.
+        TODO: Trajectory followed by the robot when walking to the desired position
+        $\bm{p}_g = (-2, 3.2)$. Here the measurements of the Kalman filter are obtained
+        using the accelerometer and the gyroscope. In green the ground truth of the coordinates $(x, y)$ of the
+        robot, in red the estimate of the EKF. The robot start at the
+        position $\bm{p}_s$ and it stops at the position $\bm{p}_f$.}
+    \label{fig:unicycle_velocities}
 \end{figure}
 
 \section{Conclusions}
