@@ -515,6 +515,7 @@ $\bm{Ax} = \bm{b}$, where:
 At this point, the position of the torso can be obtained by
 a simple transformation:
 \begin{equation}
+    \label{eq:torso-position-trilateration}
     \bm{p}_t = \bm{p}_h - \tensor[^w]{\bm{R}}{_t}(\bm{\hat{x}}_{k}) (\tensor[^t]{\bm{p}}{_h} - \tensor[^t]{\bm{p}}{_t})
 \end{equation}
 
@@ -556,8 +557,8 @@ Let's define kinematic model of the unicycle using
 polar coordinates:
 \begin{align}
     \dot{\rho}_r &= -v cos(\gamma_r) \\
-    \dot{\gamma}_r &= \frac{sin(\gamma_r)}{\rho}v - w \\
-    \dot{\delta}_r &= \frac{sin(\gamma_r)}{\rho}v
+    \dot{\gamma}_r &= \frac{sin(\gamma_r)}{\rho_r}v - w \\
+    \dot{\delta}_r &= \frac{sin(\gamma_r)}{\rho_r}v
 \end{align}
 
 \noindent with $v$ and $w$ respectively linear and angular velocity of the
@@ -605,7 +606,7 @@ subsection \ref{subsec:ekf}, we defined the measurement function (equation
 
 \noindent where $\bm{p}_{t, k}$ and $\bm{o}_{t, k}$ have been obtained by
 integrating the data of the IMU, hence, using equations \ref{eq:position-accelerometer-integration}
-and \ref{eq:orientation-gyro-integration}. Results are shown in figure
+and \ref{eq:orientation-gyro-integration}. Results are shown in Fig.
 \ref{fig:comp_ground_truth_estimated_torso_accelerometer}. As it is possible
 to see from the plots, while the orientation has good results, the estimates of
 the position are not converging to the real value.
@@ -635,14 +636,18 @@ the velocity from a timestep to the following one are similar, we decided to
 approximate it using the difference of the position of the robot between
 two successive timesteps, which are already filtered:
 \begin{equation}
-    \bm{\dot{\hat{p}}}_{t,k} \approx \bm{\dot{\hat{p}}}_{t,k-1}
+    \bm{\dot{p}}_{t,k} \approx \bm{\dot{\hat{p}}}_{t,k} \approx \bm{\dot{\hat{p}}}_{t,k-1}
     = \frac{\bm{\hat{p}}_{t,k} - \bm{\hat{p}}_{t,k-1}}{T}
 \end{equation}
 
-This approximation, as it is possible to see from figure
-\ref{fig:comp_ground_truth_estimated_torso_accelerometer_prevlinearvelocity},
-improves the previous result, estimating correctly the coordinates $(x, y)^T$
-and reducing the error on $z$. This suggests that another approach is needed
+This approximation, which has been used in equation
+\ref{eq:position-accelerometer-integration} in our implementation,,
+improves the previous result
+(Fig. \ref{fig:comp_ground_truth_estimated_torso_accelerometer_prevlinearvelocity}),
+estimating correctly the coordinates $(x, y)^T$
+and reducing the error on $z$. Even if the error on $z$ has been improved, it
+does not seem to be converging like the other two coordinates.
+This suggests that another approach is needed
 in order to further improve the estimate.
 \begin{figure}
     \centering
@@ -661,40 +666,35 @@ in order to further improve the estimate.
 \end{figure}
 
 \subsection{Trilateration}
-Todo.
+In our third experiment we equipped the robot with a RGBD camera positioned
+on top of its head and we added 6 spheres of different colors to the scene as
+already explained in subsection \ref{subsec:trilateration}. The parameters of
+the camera are those defined in Table \ref{table:trilateration-rgbd-params}.
+All the spheres
+have radius $\bar{r}=0.1$.
 
-[TODO: SAY WHICH ARE THE VALUES USED IN THE IMPLEMENTATION - CAMERA TRILATERATION].
+\begin{table}
+	\centering
+	\begin{tabular}{*{2}{c}}
+		Params & Description \\
+		\hline
+		$w=$ & width of the image \\
+        $h=$ & height of the image \\
+        $\lambda=$ & nearest clipping plane \\
+        $\lambda_f=$ & furthest clipping plane \\
+        $\phi=$ & perspective angle \\
+	\end{tabular}
+	\caption{Parameters of the RGBD camera used to do trilateration.}
+	\label{table:trilateration-rgbd-params}
+\end{table}
 
-Figures \ref{fig:comp-ground-truth-estimated-torso}
-%and \ref{fig:diff_ground_truth_estimated_torso}
-for the
-torso pose estimation (\texttt{simulationType = 1}) [TODO:
-ADD DESCRIPTION].
-
-[TODO: DOUBLE CHECK THAT THE TORSO POSE ESTIMATION IS
-ACTUALLY USEFUL TO FOLLOW THE RIGHT TRAJECTORY]
-(figure \ref{fig:walk_to_desired_position}).
-
-Figure \ref{fig:comp_estimated_torso_com} %and \ref{fig:diff_estimated_torso_com}
-for the torso position
-estimate and the CoM. Is there actually a way to use this
-for the MPC loop closure? Note, moreover, that the
-implementation of the MPC is using the position of the
-CoM w.r.t. the reference frame of the support foot, which
-is independent from the pose of the torso.
-
-%\begin{figure}
-%    \centering
-%    \includegraphics[width=\textwidth]{images/diff_ground_truth_estimated_torso.jpg}
-%    \caption{Difference of the pose of the torso estimated
-%        with the EKF with respect to the ground
-%        truth. $x$, $y$, $z$ stands for the position
-%        of the torso expressed in the reference frame of the
-%        world. $R$, $P$, $Y$ stands for the rotations roll,
-%        pitch, yaw around the respective axes of the
-%        reference frame of the world.}
-%    \label{fig:diff_ground_truth_estimated_torso}
-%\end{figure}
+We then redefined
+the measurement function so that the position of the torso observed by the
+robot is the one defined by equation \ref{eq:torso-position-trilateration}.
+Fig. \ref{fig:comp-ground-truth-estimated-torso} shows the results obtained
+when doing trilateration for the measurement of the position. As in the
+previous experiments, the measurement of
+the orientation has been computed using the gyroscope.
 
 \begin{figure}
     \centering
@@ -710,6 +710,29 @@ is independent from the pose of the torso.
     \label{fig:comp-ground-truth-estimated-torso}
 \end{figure}
 
+%\begin{figure}
+%    \centering
+%    \includegraphics[width=\textwidth]{images/diff_ground_truth_estimated_torso.jpg}
+%    \caption{Difference of the pose of the torso estimated
+%        with the EKF with respect to the ground
+%        truth. $x$, $y$, $z$ stands for the position
+%        of the torso expressed in the reference frame of the
+%        world. $R$, $P$, $Y$ stands for the rotations roll,
+%        pitch, yaw around the respective axes of the
+%        reference frame of the world.}
+%    \label{fig:diff_ground_truth_estimated_torso}
+%\end{figure}
+
+\subsection{MPC Loop Closure}
+Todo. Fig. \ref{fig:comp_estimated_torso_com} shows the results obtained
+when using trilateration+gyro.
+Figure \ref{fig:comp_estimated_torso_com} %and \ref{fig:diff_estimated_torso_com}
+for the torso position
+estimate and the CoM. Is there actually a way to use this
+for the MPC loop closure? Note, moreover, that the
+implementation of the MPC is using the position of the
+CoM w.r.t. the reference frame of the support foot, which
+is independent from the pose of the torso.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/trilateration_com.png}
@@ -724,6 +747,13 @@ is independent from the pose of the torso.
     \label{fig:comp_estimated_torso_com}
 \end{figure}
 
+\subsection{Posture Regulation}
+[TODO: DOUBLE CHECK THAT THE TORSO POSE ESTIMATION IS
+ACTUALLY USEFUL TO FOLLOW THE RIGHT TRAJECTORY]
+(Fig. \ref{fig:walk_to_desired_position}).
+Todo. Fig. \ref{fig:walk_to_desired_position} shows the trajectory.
+Fig. \ref{fig:walk_to_desired_position_yaw} shows yaw.
+Fig. \ref{fig:unicycle_velocities} shows profiles of $v$ and $w$.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/posture_regulation.png}
