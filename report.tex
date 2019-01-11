@@ -27,13 +27,71 @@
 
 \usepackage[none]{hyphenat} % Avoids to go out of margin
 
+%\usepackage{setspace} % doublespacing
+
 \begin{document}
 \sloppy % Avoids to go out of margin
 
-\title{Torso Pose Estimation on the\\HRP4 Humanoid Robot\\(draft)}
-\author{Michele Cipriano, Godwin Joey, Lorenzo Vianello\\Supervised by Nicola Scianca}
-\date{\today}
-\maketitle
+%\title{Torso Pose Estimation on the\\HRP4 Humanoid Robot\\(draft)}
+%\author{Michele Cipriano, Godwin Joey, Lorenzo Vianello\\Supervised by Nicola Scianca}
+%\date{\today}
+%\maketitle
+
+\title{FP2\\Torso Pose Estimation on the HRP4 Humanoid Robot}								% Title
+\author{Michele Cipriano, Godwin Joey, Lorenzo Vianello\\Supervised by Nicola Scianca}								% Author
+\date{\today}											% Date
+
+\makeatletter
+\let\thetitle\@title
+\let\theauthor\@author
+\let\thedate\@date
+\makeatother
+
+\begin{titlepage}
+	\centering
+    \vspace*{0.5 cm}
+    \includegraphics[scale = 0.75]{images/SapienzaLogo}\\[1.0 cm]	% University Logo
+
+    \vspace*{-0.3cm}
+    \textsc{\large Department of Computer, Control and\\Management Engineering}\\[2.0 cm]	% Department Name
+    \vspace*{1.2cm}
+
+    { \fontsize{20.74pt}{18.5pt}\selectfont\bfseries \thetitle \par } % title
+
+    \vspace*{0.1cm}
+    \textsc{\Large Autonomous and Mobile Robotics\\Robotics 2}\\[0.5 cm] % course name
+
+    \vspace*{2.8cm}
+	\begin{minipage}{0.4\textwidth}
+		\begin{flushleft} \large
+			\emph{Professors:}\\
+			Giuseppe Oriolo\\
+            Alessandro De Luca\\
+            %Computer Science Department\\
+		\end{flushleft}
+	\end{minipage}~
+	\begin{minipage}{0.4\textwidth}
+		\begin{flushright} \large
+			\emph{Students:} \\
+			Michele Cipriano\\
+            Godwin Joey\\
+            Lorenzo Vianello\\
+            \vspace*{0.2cm}
+            \emph{Supervisor:}\\
+			Nicola Scianca
+            %Semester\\
+		\end{flushright}
+
+	\end{minipage}\\[2 cm]
+
+    \vspace{0.2cm}
+    \rule{\linewidth}{0.2 mm} \\[0.3 cm]
+    \vspace*{-0.3cm}
+    Academic Year 2018/2019
+\end{titlepage}
+
+\tableofcontents
+\newpage
 
 %\begin{abstract}
 %In this experiment we studied a very important physical effect by measuring the
@@ -45,15 +103,13 @@
 %discrepancy to low efficiency of our $V$-detector.
 %\end{abstract}
 
-\begin{abstract}
-Todo.
-\end{abstract}
+%\begin{abstract}
+%Todo.
+%\end{abstract}
 
 \section{Introduction}
-
 General overview of the project, what has been implemented,
 etc\cite{DBLP:journals/arobots/OrioloPRV16}.
-
 
 \section{Torso Pose Estimation}
 Brief introduction to the section.
@@ -530,6 +586,73 @@ computation of the direct kinematics.
 
 \section{MPC Loop Closure}
 [TODO: DESCRIPTION OF THE MPC AS DONE ABOVE WITH EKF].
+
+Given the estimate of the pose of the torso $(\bm{\hat{p}}_t, \bm{\hat{o}}_t)^T$,
+it is possible to obtain the estimate of the pose of the support foot
+$(\bm{\hat{p}}_s, \bm{\hat{o}}_s)^T$ by computing:
+\begin{equation}
+    \begin{pmatrix}
+        \bm{\hat{p}}_s \\
+        \bm{\hat{o}}_s
+    \end{pmatrix} = \bm{\varOmega}\left(\bm{\varOmega}^{-1}
+        \begin{pmatrix}
+            \bm{\hat{p}}_t \\
+            \bm{\hat{o}}_t
+        \end{pmatrix}\bm{\varOmega}^{-1}
+        \begin{pmatrix}
+            \tensor[^t]{\bm{p}}{_s} \\
+            \tensor[^t]{\bm{o}}{_s}
+        \end{pmatrix}
+    \right)
+\end{equation}
+
+Note that, since in the C++ framework of the HRP4 the pose of the support foot
+expressed with respect to the torso is not available, we compute it in the
+following way:
+\begin{equation}
+    \bm{\varOmega}^{-1}
+    \begin{pmatrix}
+        \tensor[^t]{\bm{p}}{_s} \\
+        \tensor[^t]{\bm{o}}{_s}
+    \end{pmatrix} =
+    \left[\bm{\varOmega}^{-1}
+    \begin{pmatrix}
+        \tensor[^s]{\bm{p}}{_t} \\
+        \tensor[^s]{\bm{o}}{_t}
+    \end{pmatrix}\right]^{-1}
+\end{equation}
+
+At this point it is possible to compute the position the estimate of a
+reference frame attached to the CoM by computing:
+\begin{equation}
+    \begin{pmatrix}
+        \bm{\hat{p}}_{CoM} \\
+        \bm{\hat{o}}_{CoM}
+    \end{pmatrix} = \bm{\varOmega}\left(\bm{\varOmega}^{-1}
+        \begin{pmatrix}
+            \bm{\hat{p}}_s \\
+            \bm{\hat{o}}_s
+        \end{pmatrix}\bm{\varOmega}^{-1}
+        \begin{pmatrix}
+            \tensor[^s]{\bm{p}}{_{CoM}} \\
+            \tensor[^s]{\bm{o}}{_{CoM}}
+        \end{pmatrix}
+    \right)
+\end{equation}
+
+Note that these steps are necessary since, as before, in the C++ framework of the
+HRP4 it is not possible to express a reference frame attached to the CoM with
+respect to the torso.
+
+Given $\bm{\hat{p}}_{s}$, $\bm{\hat{p}}_{CoM}$ and the yaw angle $\gamma$ of
+$\bm{\hat{x}}$, it is possible to express the position of the CoM in a rotated
+reference frame of the support foot $\mathcal{F}_{s'}$ which has the $z$-axis
+orthogonal to the floor:
+\begin{equation}
+    \tensor[^{s'}]{\bm{\hat{p}}}{_{CoM}} = \bm{R}^{T}_{z}(\gamma)(\bm{\hat{p}}_{CoM}-\bm{\hat{p}}_{s})
+\end{equation}
+
+[TODO: USING $\tensor[^{s'}]{\bm{\hat{p}}}{_{CoM}}$ TO CLOSE THE MPC LOOP].
 
 \section{Posture Regulation}
 \label{section:posture_regulation}
