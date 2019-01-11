@@ -25,7 +25,10 @@
 \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
 \newcommand\norm[1]{\left\lVert#1\right\rVert}
 
+\usepackage[none]{hyphenat} % Avoids to go out of margin
+
 \begin{document}
+\sloppy % Avoids to go out of margin
 
 \title{Torso Pose Estimation on the\\HRP4 Humanoid Robot\\(draft)}
 \author{Michele Cipriano, Godwin Joey, Lorenzo Vianello\\Supervised by Nicola Scianca}
@@ -572,7 +575,9 @@ coordinates of the unicycle $(x, y, \theta)^T$ by computing:
 
 By considering the following control law:
 \begin{align}
+    \label{eq:posture-regulation-control-law-v}
     v &= k_1 \rho_r cos(\gamma_r) \\
+    \label{eq:posture-regulation-control-law-w}
     w &= k_2 \gamma_r + k_1 \frac{sin(\gamma_r) cos(\gamma_r)}{\gamma_r}(\gamma_r + k_3 \delta_r)
 \end{align}
 
@@ -676,13 +681,13 @@ have radius $\bar{r}=0.1$.
 \begin{table}
 	\centering
 	\begin{tabular}{*{2}{c}}
-		Params & Description \\
+		Camera Params. & Description \\
 		\hline
-		$w=$ & width of the image \\
-        $h=$ & height of the image \\
-        $\lambda=$ & nearest clipping plane \\
-        $\lambda_f=$ & furthest clipping plane \\
-        $\phi=$ & perspective angle \\
+		$w=512$ & width of the image \\
+        $h=512$ & height of the image \\
+        $\lambda=0.01 [m]$ & nearest clipping plane \\
+        $\lambda_f=10.0 [m]$ & furthest clipping plane \\
+        $\phi=\pi/3 [rad]$ & perspective angle \\
 	\end{tabular}
 	\caption{Parameters of the RGBD camera used to do trilateration.}
 	\label{table:trilateration-rgbd-params}
@@ -692,7 +697,10 @@ We then redefined
 the measurement function so that the position of the torso observed by the
 robot is the one defined by equation \ref{eq:torso-position-trilateration}.
 Fig. \ref{fig:comp-ground-truth-estimated-torso} shows the results obtained
-when doing trilateration for the measurement of the position. As in the
+when doing trilateration for the measurement of the position. It is
+clearly possible to notice that not only the estimate of $z$ has improved with
+respect to the previous experiment, but also $x$ and $y$ are closer to the
+ground truth. As in the
 previous experiments, the measurement of
 the orientation has been computed using the gyroscope.
 
@@ -748,12 +756,18 @@ is independent from the pose of the torso.
 \end{figure}
 
 \subsection{Posture Regulation}
-[TODO: DOUBLE CHECK THAT THE TORSO POSE ESTIMATION IS
-ACTUALLY USEFUL TO FOLLOW THE RIGHT TRAJECTORY]
-(Fig. \ref{fig:walk_to_desired_position}).
-Todo. Fig. \ref{fig:walk_to_desired_position} shows the trajectory.
-Fig. \ref{fig:walk_to_desired_position_yaw} shows yaw.
-Fig. \ref{fig:unicycle_velocities} shows profiles of $v$ and $w$.
+In our last experiment we tested the behaviour of the EKF when the robot is
+performing posture regulation (section \ref{section:posture_regulation}).
+We modeled the HRP4 as a unicycle and we made it move from its initial
+configuration $\bm{q}_s$ to a final configuration $\bm{q}_g = (-2.0, 3.2, \pi)^T$,
+making it stop when $\delta_r < 0.2$ in order to avoid problems due to
+the oscillation of the humanoid.
+
+As it is possible to see from Figures
+\ref{fig:walk_to_desired_position}-\ref{fig:walk_to_desired_position_yaw},
+the robot is able to move to the desired configuration by first going
+backward (keeping the same orientation) and then by simultaneously moving forward
+and rotating until the desired final orientation is reached.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/posture_regulation.png}
@@ -778,11 +792,20 @@ Fig. \ref{fig:unicycle_velocities} shows profiles of $v$ and $w$.
     \label{fig:walk_to_desired_position_yaw}
 \end{figure}
 
+The control law defined by Equations
+\ref{eq:posture-regulation-control-law-v}-\ref{eq:posture-regulation-control-law-w},
+when using gains $k_1=0.1$, $k_2=0.007$ and $k_3=0.004$,
+generates the velocities $v$ and $w$ shown in Fig. \ref{fig:unicycle_velocities}. The robot stops at the final
+configuration $\bm{q}_f = (-1.797, 3.194, 1.024\pi)^T$, near the estimate
+$\bm{\hat{q}}_f = (-1.824, 3.222, 1.024\pi)^T$ and
+near the desired final configuration $\bm{q}_g$.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/unicycle_velocities.png}
     \caption{Linear and angular velocity of the HRP4 while performing
-        posture regulation.}
+        posture regulation. Note that,
+        as explained in section \ref{section:posture_regulation},
+        when $\rho_r < 0.2$, $v$ are $w$ are set to 0.}
     \label{fig:unicycle_velocities}
 \end{figure}
 
