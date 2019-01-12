@@ -711,6 +711,7 @@ by computing:
 \end{equation}
 
 \subsection{Proportional Controller}
+\label{subsec:proportional_controller}
 Let's first make the robot move to a desired position with any orientation
 $\theta_g$ developing a proportional controller.
 Let's define the kinematic model of the unicycle:
@@ -760,6 +761,7 @@ from the desired position $(x_g, y_g)^T$ is less than a certain threshold (set
 to $0.25$ in our experiment).
 
 \subsection{Cartesian Regulation}
+\label{subsec:cartesian_regulation}
 Another way to obtain the same goal is to exploit the reference frame
 $\mathcal{F}_g$ defined above in order to drive the unicycle to a configuration
 $(0, 0)^T$ in $\mathcal{F}_g$ itself. Let's use the same kinematic model
@@ -985,13 +987,15 @@ Todo.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/proportional_controller.png}
-    \caption{TODO. Trajectory followed by the robot when moving to a desired configuration
-        $\bm{q}_g = (-2, 3.2, \pi)$. Here, the measurements of the Kalman filter are obtained
+    \caption{Trajectory followed by the robot when moving to a desired configuration
+        $\bm{q}_g = (-3, 5, \cdot)$ using the proportional controller
+        described in subsection \ref{subsec:proportional_controller}.
+        Here, the measurements of the Kalman filter are obtained
         using the accelerometer and the gyroscope. In green the ground truth of the coordinates $(x, y)$ of the
         robot, in red the estimate of the EKF. The robot start at the
         position $\bm{p}_s$ and it stops at the position $\bm{p}_f$. Note that,
-        as explained in section \ref{subsec:posture_regulation},
-        when $\rho_r < 0.2$, $v$ are $w$ are set to 0.}
+        as explained in section \ref{subsec:proportional_controller},
+        when $\left\|\bm{p}_g - \bm{\hat{p}}_t \right\| < 0.25$, $v$ are $w$ are set to 0.}
     \label{fig:proportional_controller_xy}
 \end{figure}
 
@@ -1000,13 +1004,15 @@ Todo.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/cartesian_regulation.png}
-    \caption{TODO. Trajectory followed by the robot when moving to a desired configuration
-        $\bm{q}_g = (-2, 3.2, \pi)$. Here, the measurements of the Kalman filter are obtained
+    \caption{Trajectory followed by the robot when moving to a desired configuration
+        $\bm{q}_g = (-2, 3.2, \cdot)$ using the cartesian regulation task
+        described in subsection \ref{subsec:cartesian_regulation}.
+        Here, the measurements of the Kalman filter are obtained
         using the accelerometer and the gyroscope. In green the ground truth of the coordinates $(x, y)$ of the
         robot, in red the estimate of the EKF. The robot start at the
         position $\bm{p}_s$ and it stops at the position $\bm{p}_f$. Note that,
         as explained in section \ref{subsec:posture_regulation},
-        when $\rho_r < 0.2$, $v$ are $w$ are set to 0.}
+        when $\left\|\bm{p}_g - \bm{\hat{p}}_t \right\| < 0.2$, $v$ are $w$ are set to 0.}
     \label{fig:cartesian_regulation_xy}
 \end{figure}
 
@@ -1027,7 +1033,9 @@ and rotating until the desired final orientation is reached.
     \centering
     \includegraphics[width=\textwidth]{images/posture_regulation.png}
     \caption{Trajectory followed by the robot when moving to a desired configuration
-        $\bm{q}_g = (-2, 3.2, \pi)$. Here, the measurements of the Kalman filter are obtained
+        $\bm{q}_g = (-2, 3.2, \pi)$ using the posture regulation task
+        described in subsection \ref{subsec:posture_regulation}.
+        Here, the measurements of the Kalman filter are obtained
         using the accelerometer and the gyroscope. In green the ground truth of the coordinates $(x, y)$ of the
         robot, in red the estimate of the EKF. The robot start at the
         position $\bm{p}_s$ and it stops at the position $\bm{p}_f$. Note that,
