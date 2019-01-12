@@ -87,7 +87,7 @@
     \vspace{0.2cm}
     \rule{\linewidth}{0.2 mm} \\[0.3 cm]
     \vspace*{-0.3cm}
-    Academic Year 2018/2019
+    Academic Year 2017/2018
 \end{titlepage}
 
 \tableofcontents
@@ -108,8 +108,35 @@
 %\end{abstract}
 
 \section{Introduction}
-General overview of the project, what has been implemented,
-etc\cite{DBLP:journals/arobots/OrioloPRV16}.
+
+The aim of the project is the estimate the pose of the torso on the HRP4
+humanoid robot following the methodologies introduced in
+\cite{DBLP:journals/arobots/OrioloPRV16}. Knowing the pose of the torso is
+extremely important because it can be used to localize any other point of
+the robot using kinematic computations based on joint encoder readings.
+The idea is to use this estimate in order to obtain the position of the CoM %/ZMP
+of the robot so that it can be used to close the feedback loop in the
+MPC gait generator.
+
+In our approach, we have developed an Extended Kalman Filter (EKF) to estimate
+the pose of the torso, using
+the joint encoders, the Inertial Measurement Unit (IMU) and a RGBD camera
+as sensors. We first used only the accelerometer and the gyroscope of the IMU
+as measurements, obtaining good results on the estimate of the orientation but
+diverging results on the position. We then improved the EKF by filtering the
+linear velocities of the torso (previously obtained by integrating the linear
+acceleration read by the accelerometer sensor) obtaining convergence on the
+$x$, $y$ axes and reducing the error on the $z$ axis. The introduction of the
+RGBD camera, less susceptible to noise and drift, further improved the
+estimate of the position of the torso, obtaining convergence on the $z$
+axis as well. In this last step we used the trilateration algorithm.
+
+We tested the behaviour of the EKF by modeling the robot as a unicycle
+in order to make it perform a cartesian and a posture regulation task,
+correctly achieving the desired final configuration in both cases.
+
+In the end, we tried to close the feedback loop in the
+MPC gait generator obtaining unsuccessful results.
 
 \section{Torso Pose Estimation}
 Brief introduction to the section.
@@ -653,6 +680,9 @@ orthogonal to the floor:
 \end{equation}
 
 [TODO: USING $\tensor[^{s'}]{\bm{\hat{p}}}{_{CoM}}$ TO CLOSE THE MPC LOOP].
+
+\section{Proportional Controller}
+Todo.
 
 \section{Posture Regulation}
 \label{section:posture_regulation}
