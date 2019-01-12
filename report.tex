@@ -138,8 +138,13 @@ correctly achieving the desired final configuration in both cases.
 In the end, we tried to close the feedback loop in the
 MPC gait generator obtaining unsuccessful results.
 
+The project has been entirely implemented in C++ using the HRP4 humanoid robot
+model in a V-REP environment.
+
 \section{Torso Pose Estimation}
-Brief introduction to the section.
+This section introduces the kinematic model used for the Extended Kalman Filter,
+describing in details its whole implementation and the different methods used
+to provide the measurements to the filter itself.
 
 \subsection{Kinematic Model}
 Let $\bm{x} = (\bm{p}_t^T, \bm{o}_t^T)^T$ be the pose of the torso frame $\mathcal{F}_t$
