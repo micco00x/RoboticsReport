@@ -982,9 +982,33 @@ is independent from the pose of the torso.
 
 \subsection{Proportional Controller}
 Todo.
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/proportional_controller.png}
+    \caption{TODO. Trajectory followed by the robot when moving to a desired configuration
+        $\bm{q}_g = (-2, 3.2, \pi)$. Here, the measurements of the Kalman filter are obtained
+        using the accelerometer and the gyroscope. In green the ground truth of the coordinates $(x, y)$ of the
+        robot, in red the estimate of the EKF. The robot start at the
+        position $\bm{p}_s$ and it stops at the position $\bm{p}_f$. Note that,
+        as explained in section \ref{subsec:posture_regulation},
+        when $\rho_r < 0.2$, $v$ are $w$ are set to 0.}
+    \label{fig:proportional_controller_xy}
+\end{figure}
 
 \subsection{Cartesian Regulation}
 Todo.
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/cartesian_regulation.png}
+    \caption{TODO. Trajectory followed by the robot when moving to a desired configuration
+        $\bm{q}_g = (-2, 3.2, \pi)$. Here, the measurements of the Kalman filter are obtained
+        using the accelerometer and the gyroscope. In green the ground truth of the coordinates $(x, y)$ of the
+        robot, in red the estimate of the EKF. The robot start at the
+        position $\bm{p}_s$ and it stops at the position $\bm{p}_f$. Note that,
+        as explained in section \ref{subsec:posture_regulation},
+        when $\rho_r < 0.2$, $v$ are $w$ are set to 0.}
+    \label{fig:cartesian_regulation_xy}
+\end{figure}
 
 \subsection{Posture Regulation}
 In our last experiment we tested the behaviour of the EKF when the robot is
@@ -1007,7 +1031,7 @@ and rotating until the desired final orientation is reached.
         using the accelerometer and the gyroscope. In green the ground truth of the coordinates $(x, y)$ of the
         robot, in red the estimate of the EKF. The robot start at the
         position $\bm{p}_s$ and it stops at the position $\bm{p}_f$. Note that,
-        as explained in section \ref{section:posture_regulation},
+        as explained in section \ref{subsec:posture_regulation},
         when $\rho_r < 0.2$, $v$ are $w$ are set to 0.}
     \label{fig:walk_to_desired_position}
 \end{figure}
