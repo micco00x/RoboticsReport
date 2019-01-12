@@ -431,9 +431,9 @@ integration:
 \begin{equation}
     \bm{T}(\bm{\hat{x}}_{k}) =
     \begin{pmatrix}
-        cos(\gamma)/cos(\beta) & sin(\gamma)/cos(\beta) & 0 \\
-        -sin(\gamma) &  cos(\gamma) & 0 \\
-        cos(\gamma) tan(\beta) & sin(\gamma) tan(\beta) & 1
+        \text{cos}(\gamma)/\text{cos}(\beta) & \text{sin}(\gamma)/\text{cos}(\beta) & 0 \\
+        -\text{sin}(\gamma) &  \text{cos}(\gamma) & 0 \\
+        \text{cos}(\gamma) \text{tan}(\beta) & \text{sin}(\gamma) \text{tan}(\beta) & 1
     \end{pmatrix}
 \end{equation}
 
@@ -445,9 +445,9 @@ integration:
 %\begin{equation}
 %    \tensor[]{\bm{T}}{_{RPY}}(\bm{\hat{x}}_{k}) =
 %    \begin{pmatrix}
-%        cos(\beta) cos(\gamma) & -sin(\gamma) & 0 \\
-%        cos(\beta) sin(\gamma) &  cos(\gamma) & 0 \\
-%        -sin(\beta) & 0 & 1
+%        \text{cos}(\beta) \text{cos}(\gamma) & -\text{sin}(\gamma) & 0 \\
+%        \text{cos}(\beta) \text{sin}(\gamma) &  \text{cos}(\gamma) & 0 \\
+%        -\text{sin}(\beta) & 0 & 1
 %    \end{pmatrix}
 %\end{equation}
 
@@ -715,8 +715,8 @@ Let's first make the robot move to a desired position with any orientation
 $\theta_g$ developing a proportional controller.
 Let's define the kinematic model of the unicycle:
 \begin{align}
-    \dot{x} &= v cos(\theta) \\
-    \dot{y} &= v sin(\theta) \\
+    \dot{x} &= v \text{cos}(\theta) \\
+    \dot{y} &= v \text{sin}(\theta) \\
     \dot{\theta} &= \omega
 \end{align}
 
@@ -736,18 +736,18 @@ the estimated position $(x, y)^T$ of the torso and $e_{\theta}$ is the angle
 between the sagittal vector of the
 unicycle and the vector pointing from the unicycle towards the goal:
 \begin{equation}
-    e_{\theta} = sgn\left(
+    e_{\theta} = \text{sgn}\left(
         \begin{pmatrix}
-            cos(\theta) \\
-            sin(\theta)
+            \text{cos}(\theta) \\
+            \text{sin}(\theta)
         \end{pmatrix}
     \times (\bm{p}_g - \bm{\hat{p}}_t)
     \right) \cdot
-    acos\left(
+    \text{acos}\left(
         \frac{
         \begin{pmatrix}
-            cos(\theta) \\
-            sin(\theta)
+            \text{cos}(\theta) \\
+            \text{sin}(\theta)
         \end{pmatrix}^T (\bm{p}_g - \bm{\hat{p}}_t)
         }{\left\|\bm{p}_g - \bm{\hat{p}}_t\right\|}
     \right)
@@ -765,7 +765,7 @@ $\mathcal{F}_g$ defined above in order to drive the unicycle to a configuration
 $(0, 0)^T$ in $\mathcal{F}_g$ itself. Let's use the same kinematic model
 defined above and consider the following control law:
 \begin{align}
-    v &= -k_1 (\tensor[^g]{x}{} cos(\tensor[^g]{\theta}{}) + \tensor[^g]{y}{} sin(\tensor[^g]{\theta}{})) \\
+    v &= -k_1 (\tensor[^g]{x}{} \text{cos}(\tensor[^g]{\theta}{}) + \tensor[^g]{y}{} \text{sin}(\tensor[^g]{\theta}{})) \\
     w &=  k_2 (\text{Atan2}(\tensor[^g]{y}{}, \tensor[^g]{x}{}) - \tensor[^g]{\theta}{} + \pi)
 \end{align}
 
@@ -784,9 +784,9 @@ orientation $\theta_g$ as well.
 Let's define the kinematic model of the unicycle using
 polar coordinates:
 \begin{align}
-    \dot{\rho}_r &= -v cos(\gamma_r) \\
-    \dot{\gamma}_r &= \frac{sin(\gamma_r)}{\rho_r}v - w \\
-    \dot{\delta}_r &= \frac{sin(\gamma_r)}{\rho_r}v
+    \dot{\rho}_r &= -v \text{cos}(\gamma_r) \\
+    \dot{\gamma}_r &= \frac{\text{sin}(\gamma_r)}{\rho_r}v - w \\
+    \dot{\delta}_r &= \frac{\text{sin}(\gamma_r)}{\rho_r}v
 \end{align}
 
 \noindent with $v$ and $w$ respectively linear and angular velocity of the
@@ -801,9 +801,9 @@ coordinates of the unicycle $(x, y, \theta)^T$ by computing:
 By considering the following control law:
 \begin{align}
     \label{eq:posture-regulation-control-law-v}
-    v &= k_1 \rho_r cos(\gamma_r) \\
+    v &= k_1 \rho_r \text{cos}(\gamma_r) \\
     \label{eq:posture-regulation-control-law-w}
-    w &= k_2 \gamma_r + k_1 \frac{sin(\gamma_r) cos(\gamma_r)}{\gamma_r}(\gamma_r + k_3 \delta_r)
+    w &= k_2 \gamma_r + k_1 \frac{\text{sin}(\gamma_r) \text{cos}(\gamma_r)}{\gamma_r}(\gamma_r + k_3 \delta_r)
 \end{align}
 
 \noindent it is possible to prove\cite{Siciliano:2008:RMP:1524151}
