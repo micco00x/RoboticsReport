@@ -686,13 +686,9 @@ orthogonal to the floor:
 
 [TODO: USING $\tensor[^{s'}]{\bm{\hat{p}}}{_{CoM}}$ TO CLOSE THE MPC LOOP].
 
-\section{Proportional Controller}
-Todo.
-
-\section{Posture Regulation}
-\label{section:posture_regulation}
+\section{Regulation}
 Another way to test the correctness of the EKF is to make the robot perform
-the posture regulation task, hence, make it move to a certain configuration
+a regulation task, hence, make it move to a certain configuration
 $(x_g, y_g, \theta_g)^T$. Note that the problem can be simplified by
 modeling the robot as a unicycle and by considering its coordinates
 in a reference frame $\mathcal{F}_g$ fixed at a position $(x_g, y_g)^T$ and
@@ -714,7 +710,78 @@ by computing:
     \end{pmatrix}
 \end{equation}
 
-Let's define kinematic model of the unicycle using
+\subsection{Proportional Controller}
+Let's first make the robot move to a desired position with any orientation
+$\theta_g$ developing a proportional controller.
+Let's define the kinematic model of the unicycle:
+\begin{align}
+    \dot{x} &= v cos(\theta) \\
+    \dot{y} &= v sin(\theta) \\
+    \dot{\theta} &= \omega
+\end{align}
+
+\noindent with $v$ and $w$ respectively linear and angular velocity of the
+unicycle. A simple way to obtain the desired behaviour is to control the
+linear velocity $v$ by making it decrease while moving closer to the goal and to
+control the
+angular velocity $\omega$ so that the unicycle
+will be oriented towards the goal:
+\begin{align}
+    v &= k_1 \left\| \bm{p}_g - \bm{\hat{p}}_t \right\| \\
+    w &= k_2 e_{\theta}
+\end{align}
+
+\noindent where $\bm{p}_g$ is the desired position, $\bm{\hat{p}}_t$ is
+the estimated position $(x, y)^T$ of the torso and $e_{\theta}$ is the angle
+between the sagittal vector of the
+unicycle and the vector pointing from the unicycle towards the goal:
+\begin{equation}
+    e_{\theta} = sgn\left(
+        \begin{pmatrix}
+            cos(\theta) \\
+            sin(\theta)
+        \end{pmatrix}
+    \times (\bm{p}_g - \bm{\hat{p}}_t)
+    \right) \cdot
+    acos\left(
+        \frac{
+        \begin{pmatrix}
+            cos(\theta) \\
+            sin(\theta)
+        \end{pmatrix}^T (\bm{p}_g - \bm{\hat{p}}_t)
+        }{\left\|\bm{p}_g - \bm{\hat{p}}_t\right\|}
+    \right)
+\end{equation}
+
+Of course, since the humanoid robot has an oscillatory motion due to the
+gait, we decided to set the velocities $v$ and $w$ to $0$ when the distance
+$\left\|\bm{p}_g - \bm{\hat{p}}_t \right\|$
+from the desired position $(x_g, y_g)^T$ is less than a certain threshold (set
+to $0.25$ in our experiment).
+
+\subsection{Cartesian Regulation}
+Another way to obtain the same goal is to exploit the reference frame
+$\mathcal{F}_g$ defined above in order to drive the unicycle to a configuration
+$(0, 0)^T$ in $\mathcal{F}_g$ itself. Let's use the same kinematic model
+defined above and consider the following control law:
+\begin{align}
+    v &= -k_1 (\tensor[^g]{x}{} cos(\tensor[^g]{\theta}{}) + \tensor[^g]{y}{} sin(\tensor[^g]{\theta}{})) \\
+    w &=  k_2 (\text{Atan2}(\tensor[^g]{y}{}, \tensor[^g]{x}{}) - \tensor[^g]{\theta}{} + \pi)
+\end{align}
+
+The robot will move to $(0, 0)^T$ in $\mathcal{F}_g$ and hence to the desired
+position $\bm{p}_g$ with any orientation. As before, since the humanoid robot
+has an oscillatory motion due to the
+gait, we decided to set the velocities $v$ and $w$ to $0$ when the distance
+$\left\|\bm{p}_g - \bm{\hat{p}}_t \right\|$
+from the desired position $(x_g, y_g)^T$ is less than a certain threshold (set
+to $0.2$ in our experiment).
+
+\subsection{Posture Regulation}
+\label{subsec:posture_regulation}
+Let's now make the robot move to a desired configuration specifying the
+orientation $\theta_g$ as well.
+Let's define the kinematic model of the unicycle using
 polar coordinates:
 \begin{align}
     \dot{\rho}_r &= -v cos(\gamma_r) \\
@@ -743,7 +810,7 @@ By considering the following control law:
 that $\rho_r$, $\gamma_r$ and $\delta_r$ converge to zero, which implies that
 the configuration of the unicycle $(x, y, \theta)^T$ converges to the desired
 configuration $(x_g, y_g, \theta_g)^T$.
-Of course, since the humanoid robot has an oscillatory motion due to the
+Again, since the humanoid robot has an oscillatory motion due to the
 gait, we decided to set the velocities $v$ and $w$ to $0$ when the distance $\rho_r$
 from the desired position $(x_g, y_g)^T$ is less than a certain threshold (set
 to $0.2$ in our experiment).
@@ -913,9 +980,15 @@ is independent from the pose of the torso.
     \label{fig:comp_estimated_torso_com}
 \end{figure}
 
+\subsection{Proportional Controller}
+Todo.
+
+\subsection{Cartesian Regulation}
+Todo.
+
 \subsection{Posture Regulation}
 In our last experiment we tested the behaviour of the EKF when the robot is
-performing posture regulation (section \ref{section:posture_regulation}).
+performing posture regulation (subsection \ref{subsec:posture_regulation}).
 We modeled the HRP4 as a unicycle and we made it move from its initial
 configuration $\bm{q}_s$ to a final configuration $\bm{q}_g = (-2.0, 3.2, \pi)^T$,
 making it stop when $\delta_r < 0.2$ in order to avoid problems due to
@@ -962,7 +1035,7 @@ near the desired final configuration $\bm{q}_g$.
     \includegraphics[width=\textwidth]{images/unicycle_velocities.png}
     \caption{Linear and angular velocity of the HRP4 while performing
         posture regulation. Note that,
-        as explained in section \ref{section:posture_regulation},
+        as explained in subsection \ref{subsec:posture_regulation},
         when $\rho_r < 0.2$, $v$ are $w$ are set to 0.}
     \label{fig:unicycle_velocities}
 \end{figure}
