@@ -30,6 +30,7 @@
 % Fontsize of figure smaller than normalsize:
 \usepackage{caption}
 \captionsetup[figure]{font=small}
+\captionsetup[table]{font=small}
 
 %\usepackage{setspace} % doublespacing
 
@@ -142,7 +143,7 @@ correctly achieving the desired final configuration in both cases.
 In the end, we tried to close the feedback loop in the
 MPC gait generator obtaining unsuccessful results.
 
-The project has been entirely implemented in C++ using the HRP4 humanoid robot
+The project has been entirely developed in C++ using the HRP4 humanoid robot
 model in a V-REP environment.
 
 \section{Torso Pose Estimation}
@@ -300,8 +301,8 @@ the implementation. The whole configuration of the robot $\bm{q}$ is used instea
 \subsection{Extended Kalman Filter}
 \label{subsec:ekf}
 It is now possible to define a discrete-time stochastic system
-using equations (\ref{eq:hrp4-kinematic-model},
-\ref{eq:ekf-observation-function}), with $T$ sampling
+using Equations \ref{eq:hrp4-kinematic-model}-\ref{eq:ekf-observation-function},
+with $T$ sampling
 interval of the filter and $k$ current timestep:
 \begin{align}
     \bm{x}_{k+1} &= \bm{x}_k + T \bm{J}(\bm{q}_{s,k}, \bm{o}_s) \bm{\dot{q}}_{s,k} + \bm{v}_k \\
@@ -380,7 +381,7 @@ matrices $\bm{V}$ and $\bm{W}$ as:
 \label{subsec:accelerometer-integration}
 
 As said before, the measurement of the position of the torso $\bm{p}_t$ can be computed
-by either doing trilateration exploiting the known position of the landmarks or
+by either doing trilateration, exploiting the known position of the landmarks, or
 by integrating the data coming from the accelerometer. Let's discuss the second
 approach considering constant acceleration $\bm{\ddot{p}}_{t, k}$ in an interval $[t_k, t_{k+1})$:
 \begin{align}
@@ -490,7 +491,7 @@ in our implementation) of the sphere itself.
 Let $w$ and $h$ be the width and the
 height of the images coming from the RGB camera. Let $\lambda$ be
 the focal length (length to the nearest clipping
-plane), $\lambda_f$ be length to the furthest clipping plane and
+plane), $\lambda_f$ be the length to the furthest clipping plane and
 $\phi$ be the perspective angle of the camera. It is possible
 to obtain the position (expressed with respect to
 the reference frame of the camera) of each sphere with centroid
@@ -582,12 +583,12 @@ $\bm{Ax} = \bm{b}$, where:
         \end{pmatrix}
 \end{equation}
 
-\noindent where each element of the vector $b$ is defined as:
+\noindent and each element of the vector $b$ is defined as:
 \begin{equation}
     b_{k1} = \frac{1}{2}\left[ r_1^2 + r_k^2 + (x_k - x_1)^2 + (y_k - y_1)^2 + (z_k - z_1)^2 \right] \quad (k = 2, 3, \dots, n)
 \end{equation}
 
-\noindent hence, the position of the camera can be determined by:
+Hence, the position of the camera can be determined by:
 \begin{equation}
     %\begin{pmatrix}
     %    x \\
@@ -679,7 +680,7 @@ reference frame attached to the CoM by computing:
 \end{equation}
 
 Note that these steps are necessary since, as before, in the C++ framework of the
-HRP4 it is not possible to express a reference frame attached to the CoM with
+HRP4 it is not possible to directly express a reference frame attached to the CoM with
 respect to the torso.
 
 Given $\bm{\hat{p}}_{s}$, $\bm{\hat{p}}_{CoM}$ and the yaw angle $\gamma$ of
@@ -775,7 +776,7 @@ to $0.25$ in our experiment).
 
 \subsection{Cartesian Regulation}
 \label{subsec:cartesian_regulation}
-Another way to obtain the same goal is to exploit the reference frame
+Another way to achieve the same goal is to exploit the reference frame
 $\mathcal{F}_g$ defined above in order to drive the unicycle to a configuration
 $(0, 0)^T$ in $\mathcal{F}_g$ itself. Let's use the same kinematic model
 defined above and consider the following control law:
@@ -847,7 +848,7 @@ making the robot move a few steps before falling.
 \subsection{Inertial Measurement Unit}
 The first test mainly focused on the integration of the data coming from
 the accelerometer and the gyroscope (IMU). Considering the EKF described in
-subsection \ref{subsec:ekf}, we defined the measurement function (equation
+subsection \ref{subsec:ekf}, we defined the measurement function (Eq.
 \ref{eq:ekf-observation-function}) at each timestep $k$ as:
 \begin{equation}
     \bm{y}_k = \bm{h}(\bm{\hat{x}}_k, \bm{q}_{n, k}) =
@@ -858,7 +859,7 @@ subsection \ref{subsec:ekf}, we defined the measurement function (equation
 \end{equation}
 
 \noindent where $\bm{p}_{t, k}$ and $\bm{o}_{t, k}$ have been obtained by
-integrating the data of the IMU, hence, using equations \ref{eq:position-accelerometer-integration}
+integrating the data of the IMU, hence, using Equations \ref{eq:position-accelerometer-integration}
 and \ref{eq:orientation-gyro-integration}. Results are shown in Fig.
 \ref{fig:comp_ground_truth_estimated_torso_accelerometer}. As it is possible
 to see from the plots, while the orientation has good results, the estimates of
@@ -866,7 +867,7 @@ the position are not converging to the real value.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/accelerometer.png}
-    \caption{Comparison between the ground truth (in green) and the estimation (in red) of the torso
+    \caption{Comparison between the ground truth (in green) and the estimate (in red) of the torso
         pose when using a double integrator on the data of the accelerometer
         and the gyroscope. $x$, $y$, $z$ stands for the position
         of the torso expressed in the reference frame of the
@@ -878,12 +879,12 @@ the position are not converging to the real value.
 
 The main reason why the method is not working is because the integration of the
 linear acceleration is subject to drift, hence, the velocity term computed in
-equation \ref{eq:velocity-accelerometer-integration} is accumulating an error
+Eq. \ref{eq:velocity-accelerometer-integration} is accumulating an error
 at each timestep.
 
 \subsection{Filtering Linear Velocities}
-One way to fix the problem of drift accumulation of the
-acceleration is to add the linear velocity to the EKF. Nevertheless, since this
+One way to fix the problem of drift accumulation on the
+integration of the acceleration is to add the linear velocity to the EKF. Nevertheless, since this
 requires an observation function for the linear velocity and since
 the velocity from a timestep to the following one are similar, we decided to
 approximate it using the difference of the position of the robot between
@@ -893,9 +894,9 @@ two successive timesteps, which are already filtered:
     = \frac{\bm{\hat{p}}_{t,k} - \bm{\hat{p}}_{t,k-1}}{T}
 \end{equation}
 
-This approximation, which has been used in equation
+This approximation, which has been used in Eq.
 \ref{eq:position-accelerometer-integration} in our implementation,,
-improves the previous result
+improves the previous results
 (Fig. \ref{fig:comp_ground_truth_estimated_torso_accelerometer_prevlinearvelocity}),
 estimating correctly the coordinates $(x, y)^T$
 and reducing the error on $z$. Even if the error on $z$ has been improved, it
@@ -905,7 +906,7 @@ in order to further improve the estimate.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/accelerometer_prev_linearvelocity.png}
-    \caption{Comparison between the ground truth (in green) and the estimation (in red) of the torso
+    \caption{Comparison between the ground truth (in green) and the estimate (in red) of the torso
         pose when using a double integrator on the data of the accelerometer
         and the gyroscope. Here the velocity is approximated with the velocity
         of the previous step, which is in turn computed using the positions
@@ -924,7 +925,7 @@ on top of its head and we added 6 spheres of different colors to the scene as
 already explained in subsection \ref{subsec:trilateration}. The parameters of
 the camera are those defined in Table \ref{table:trilateration-rgbd-params}.
 All the spheres
-have radius $\bar{r}=0.1$.
+have radius $\bar{r}=0.05$.
 
 \begin{table}
 	\centering
@@ -943,7 +944,7 @@ have radius $\bar{r}=0.1$.
 
 We then redefined
 the measurement function so that the position of the torso observed by the
-robot is the one defined by equation \ref{eq:torso-position-trilateration}.
+robot is the one defined by Eq. \ref{eq:torso-position-trilateration}.
 Fig. \ref{fig:comp-ground-truth-estimated-torso} shows the results obtained
 when doing trilateration for the measurement of the position. It is
 clearly possible to notice that not only the estimate of $z$ has improved with
@@ -955,7 +956,7 @@ the orientation has been computed using the gyroscope.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/trilateration.png}
-    \caption{Comparison of the pose of the torso estimated
+    \caption{Comparison between the pose of the torso estimated
         with the EKF (in red) with respect to the ground
         truth (in green) when using trilateration and the data coming
         from the gyroscope. $x$, $y$, $z$ stands for the position
@@ -980,11 +981,14 @@ the orientation has been computed using the gyroscope.
 %\end{figure}
 
 \subsection{MPC Loop Closure}
-Given the estimate of the pose of the torso $\bm{\hat{x}}$ we checked that it
-could be used to estimate correctly also the position of the CoM of the robot
-$\bm{\hat{p}}_{CoM}$ with respect to the world frame (eq.
-\ref{eq:pose-rf-com-world}). The results are shown in Fig.
-\ref{fig:comp_estimated_torso_com}. We then expressed the position of the CoM
+Given the estimate of the pose of the torso $\bm{\hat{x}}$ we checked wheather it
+could be used to estimate also the position of the CoM of the robot
+$\bm{\hat{p}}_{CoM}$ with respect to the world frame (Eq.
+\ref{eq:pose-rf-com-world}), correctly converging to the ground truth.
+The results are shown in Fig.
+\ref{fig:comp_estimated_torso_com}.
+
+We then expressed the position of the CoM
 in a rotated reference frame of the support foot $\mathcal{F}_{s'}$,
 as described in section \ref{section:mpc-loop-closure}, without achieving the
 desired behaviour. The robot, in fact, falls after a few steps even when using
@@ -1036,7 +1040,7 @@ the oscillation of the humanoid (Fig. \ref{fig:proportional_controller_xy}).
 
 The control law defined by Equations
 \ref{eq:proportional-controller-control-law-v}-\ref{eq:proportional-controller-control-law-w},
-when using gains $k_1=0.18$, $k_2=0.014$ makes robot stops at the final
+when using gains $k_1=0.18$, $k_2=0.014$ makes the robot stop at the final
 configuration $\bm{q}_f = (-2.798, 5.090, 0.98\pi)^T$, near the estimate
 $\bm{\hat{q}}_f = (-2.885, 5.127, 0.979\pi)^T$ and
 near the desired final configuration $\bm{q}_g$.
@@ -1089,7 +1093,7 @@ and rotating until the desired final orientation is reached.
     \centering
     \includegraphics[width=\textwidth]{images/posture_regulation.png}
     \caption{Trajectory followed by the robot when moving to a desired configuration
-        $\bm{q}_g = (-2, 3.2, \pi)$ using the posture regulation task
+        $\bm{q}_g = (-2, 3.2, \pi)$ while performing the posture regulation task
         described in subsection \ref{subsec:posture_regulation}.
         Here, the measurements of the Kalman filter are obtained
         using the accelerometer and the gyroscope. In green the ground truth of the coordinates $(x, y)$ of the
@@ -1104,7 +1108,9 @@ and rotating until the desired final orientation is reached.
     \centering
     \includegraphics[width=\textwidth]{images/yaw_postureregulation.png}
     \caption{Orientation followed by the robot when moving to a desired configuration
-        $\bm{q}_g = (-2, 3.2, \pi)$. Here, the measurements of the Kalman filter are obtained
+        $\bm{q}_g = (-2, 3.2, \pi)$ while performing the posture regulation task
+        described in subsection \ref{subsec:posture_regulation}.
+        Here, the measurements of the Kalman filter are obtained
         using the accelerometer and the gyroscope. In green the ground truth of the coordinate $\theta$ of the
         robot (unicycle), in red the estimate of the EKF (note that they coincide
         for the whole path). In blue the desired final orientation $\theta_g = \pi$.}
@@ -1121,10 +1127,9 @@ near the desired final configuration $\bm{q}_g$.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/unicycle_velocities.png}
-    \caption{Linear and angular velocity of the HRP4 while performing
-        posture regulation. Note that,
-        as explained in subsection \ref{subsec:posture_regulation},
-        when $\rho_r < 0.2$, $v$ are $w$ are set to 0.}
+    \caption{Linear and angular velocity of the HRP4 while performing the
+        posture regulation task described in subsection \ref{subsec:posture_regulation}.
+        Note that when $\rho_r < 0.2$, $v$ are $w$ are set to 0.}
     \label{fig:unicycle_velocities_posture_regulation}
 \end{figure}
 
@@ -1145,7 +1150,7 @@ implementation of the MPC.
 
 The behaviour of the EKF could be further improved by fusing the sensors used in
 the project. Moreover, developing a proper VSLAM system could make the robot
-localize in more complex environment, enabling advanced behaviours and increasing
+localize in more complex environments, enabling advanced behaviours and increasing
 the chances of making the MPC work correctly.
 
 %++++++++++++++++++++++++++++++++++++++++
