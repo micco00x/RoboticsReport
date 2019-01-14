@@ -38,7 +38,7 @@
 %\maketitle
 
 \title{FP2\\Torso Pose Estimation on the HRP4 Humanoid Robot}								% Title
-\author{Michele Cipriano, Godwin Joey, Lorenzo Vianello\\Supervised by Nicola Scianca}								% Author
+\author{Michele Cipriano, Godwin K. Peprah, Lorenzo Vianello\\Supervised by Nicola Scianca}								% Author
 \date{\today}											% Date
 
 \makeatletter
@@ -74,7 +74,7 @@
 		\begin{flushright} \large
 			\emph{Students:} \\
 			Michele Cipriano\\
-            Godwin Joey\\
+            Godwin K. Peprah\\
             Lorenzo Vianello\\
             \vspace*{0.2cm}
             \emph{Supervisor:}\\
@@ -716,8 +716,11 @@ Let's first make the robot move to a desired position with any orientation
 $\theta_g$ developing a proportional controller.
 Let's define the kinematic model of the unicycle:
 \begin{align}
+    \label{eq:kinematic-model-unicycle-xdot}
     \dot{x} &= v \text{cos}(\theta) \\
+    \label{eq:kinematic-model-unicycle-ydot}
     \dot{y} &= v \text{sin}(\theta) \\
+    \label{eq:kinematic-model-unicycle-thetadot}
     \dot{\theta} &= \omega
 \end{align}
 
@@ -728,7 +731,9 @@ control the
 angular velocity $\omega$ so that the unicycle
 will be oriented towards the goal:
 \begin{align}
+    \label{eq:proportional-controller-control-law-v}
     v &= k_1 \left\| \bm{p}_g - \bm{\hat{p}}_t \right\| \\
+    \label{eq:proportional-controller-control-law-w}
     w &= k_2 e_{\theta}
 \end{align}
 
@@ -767,7 +772,9 @@ $\mathcal{F}_g$ defined above in order to drive the unicycle to a configuration
 $(0, 0)^T$ in $\mathcal{F}_g$ itself. Let's use the same kinematic model
 defined above and consider the following control law:
 \begin{align}
+    \label{eq:cartesian-regulation-control-law-v}
     v &= -k_1 (\tensor[^g]{x}{} \text{cos}(\tensor[^g]{\theta}{}) + \tensor[^g]{y}{} \text{sin}(\tensor[^g]{\theta}{})) \\
+    \label{eq:cartesian-regulation-control-law-w}
     w &=  k_2 (\text{Atan2}(\tensor[^g]{y}{}, \tensor[^g]{x}{}) - \tensor[^g]{\theta}{} + \pi)
 \end{align}
 
@@ -971,10 +978,10 @@ is independent from the pose of the torso.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/trilateration_com.png}
-    \caption{Comparison of the position of the torso
-        estimated
-        with the EKF (in red) with respect to the CoM (in green) when using
-        trilateration and the gyroscope. $x$, $y$, $z$ stands for the position
+    \caption{Comparison between the estimate of the position of the CoM
+        obtained with the EKF (in red) and the ground truth of the CoM
+        (in green) when using trilateration and the gyroscope.
+        $x$, $y$, $z$ stands for the position
         of the torso expressed in the reference frame of the
         world. $R$, $P$, $Y$ stands for the rotations roll,
         pitch, yaw around the respective axes of the
@@ -983,7 +990,15 @@ is independent from the pose of the torso.
 \end{figure}
 
 \subsection{Proportional Controller}
-Todo.
+We tested the behaviour of the EKF when the robot is
+performing cartesian regulation (subsection \ref{subsec:proportional_controller}).
+We modeled the HRP4 as a unicycle (Equations
+\ref{eq:kinematic-model-unicycle-xdot}-\ref{eq:kinematic-model-unicycle-thetadot})
+and we made it move from its initial
+configuration $\bm{q}_s$ to a final configuration $\bm{q}_g = (-3, 5, \cdot)^T$,
+making it stop when $\left\|\bm{p}_g - \bm{\hat{p}}_t \right\| < 0.25$
+in order to avoid problems due to
+the oscillation of the humanoid (Fig. \ref{fig:proportional_controller_xy}).
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/proportional_controller.png}
@@ -999,8 +1014,20 @@ Todo.
     \label{fig:proportional_controller_xy}
 \end{figure}
 
+The control law defined by Equations
+\ref{eq:proportional-controller-control-law-v}-\ref{eq:proportional-controller-control-law-w},
+when using gains $k_1=0.18$, $k_2=0.014$ makes robot stops at the final
+configuration $\bm{q}_f = (-2.798, 5.090, 0.98\pi)^T$, near the estimate
+$\bm{\hat{q}}_f = (-2.885, 5.127, 0.979\pi)^T$ and
+near the desired final configuration $\bm{q}_g$.
+
 \subsection{Cartesian Regulation}
-Todo.
+We then tested cartesian regulation (subsection \ref{subsec:cartesian_regulation})
+on a different control law, modelling the HRP4 as in the previous experiment.
+We made the robot move from its initial
+configuration $\bm{q}_s$ to a final configuration $\bm{q}_g = (-2, 3.2, \cdot)^T$,
+making it stop when $\left\|\bm{p}_g - \bm{\hat{p}}_t \right\| < 0.2$ as it is
+possible to see from Fig. \ref{fig:cartesian_regulation_xy}.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/cartesian_regulation.png}
@@ -1016,10 +1043,19 @@ Todo.
     \label{fig:cartesian_regulation_xy}
 \end{figure}
 
+The control law defined by Equations
+\ref{eq:cartesian-regulation-control-law-v}-\ref{eq:cartesian-regulation-control-law-w},
+when using gains $k_1=todo$, $k_2=todo$ makes robot stops at the final
+configuration $\bm{q}_f = (-1.788, 3.105, 1.562\pi)^T$, near the estimate
+$\bm{\hat{q}}_f = (-1.823, 3.108, 1.562\pi)^T$ and
+near the desired final configuration $\bm{q}_g$. It is interesting to notice
+that the robot starts oscillating on the spot when it reaches a configuration
+which is close to the desired one.
+
 \subsection{Posture Regulation}
 In our last experiment we tested the behaviour of the EKF when the robot is
 performing posture regulation (subsection \ref{subsec:posture_regulation}).
-We modeled the HRP4 as a unicycle and we made it move from its initial
+We modeled, again, the HRP4 as a unicycle and we made it move from its initial
 configuration $\bm{q}_s$ to a final configuration $\bm{q}_g = (-2.0, 3.2, \pi)^T$,
 making it stop when $\delta_r < 0.2$ in order to avoid problems due to
 the oscillation of the humanoid.
@@ -1058,7 +1094,7 @@ and rotating until the desired final orientation is reached.
 The control law defined by Equations
 \ref{eq:posture-regulation-control-law-v}-\ref{eq:posture-regulation-control-law-w},
 when using gains $k_1=0.1$, $k_2=0.007$ and $k_3=0.004$,
-generates the velocities $v$ and $w$ shown in Fig. \ref{fig:unicycle_velocities}. The robot stops at the final
+generates the velocities $v$ and $w$ shown in Fig. \ref{fig:unicycle_velocities_posture_regulation}. The robot stops at the final
 configuration $\bm{q}_f = (-1.797, 3.194, 1.024\pi)^T$, near the estimate
 $\bm{\hat{q}}_f = (-1.824, 3.222, 1.024\pi)^T$ and
 near the desired final configuration $\bm{q}_g$.
@@ -1069,12 +1105,28 @@ near the desired final configuration $\bm{q}_g$.
         posture regulation. Note that,
         as explained in subsection \ref{subsec:posture_regulation},
         when $\rho_r < 0.2$, $v$ are $w$ are set to 0.}
-    \label{fig:unicycle_velocities}
+    \label{fig:unicycle_velocities_posture_regulation}
 \end{figure}
 
 \section{Conclusions}
-Summary of the project, possible future developments and
-conclusions.
+In this project we developed an Extended Kalman Filter to localize the HRP4
+humanoid robot in a V-REP environment. We equipped the robot with a gyroscope,
+an accelerometer and a RGBD camera, considering different approaches in order
+to make the estimate as accurate as possible. We first tested the EKF when
+using only IMU measurements, not achieving convergence. We then filtered the
+linear velocities of the robot improving the estimate and correctly localizing
+it in the environment. Then we developed a trilateration algorithm
+and used a RGBD camera further improving the estimate. We validated our
+implementation on cartesian and posture regulation tasks, correctly
+achieving the desired configuration. In the end we used the estimate of the
+CoM of the robot to close the feedback loop of the MPC gait generator but we did not
+achieved the desired behaviour, suggesting that a deeper study is needed in the
+implementation of the MPC.
+
+The behaviour of the EKF could be further improved by fusing the sensors used in
+the project. Moreover, developing a proper VSLAM system could make the robot
+localize in more complex environment, enabling advanced behaviour and increasing
+the chances of making the MPC work correctly.
 
 %++++++++++++++++++++++++++++++++++++++++
 % References section will be created automatically
