@@ -27,6 +27,10 @@
 
 \usepackage[none]{hyphenat} % Avoids to go out of margin
 
+% Fontsize of figure smaller than normalsize:
+\usepackage{caption}
+\captionsetup[figure]{font=small}
+
 %\usepackage{setspace} % doublespacing
 
 \begin{document}
@@ -617,9 +621,10 @@ the hierarchical model of the robot in order to simplify the
 computation of the direct kinematics.
 
 \section{MPC Loop Closure}
-[TODO: DESCRIPTION OF THE MPC AS DONE ABOVE WITH EKF].
-
-Given the estimate of the pose of the torso $(\bm{\hat{p}}_t, \bm{\hat{o}}_t)^T$,
+\label{section:mpc-loop-closure}
+One way to check that the EKF is working properly is to use it to close
+the loop of the MPC gait generator. Given the estimate of the pose of the torso
+$(\bm{\hat{p}}_t, \bm{\hat{o}}_t)^T$,
 it is possible to obtain the estimate of the pose of the support foot
 $(\bm{\hat{p}}_s, \bm{\hat{o}}_s)^T$ by computing:
 \begin{equation}
@@ -657,6 +662,7 @@ following way:
 At this point it is possible to compute the position the estimate of a
 reference frame attached to the CoM by computing:
 \begin{equation}
+    \label{eq:pose-rf-com-world}
     \begin{pmatrix}
         \bm{\hat{p}}_{CoM} \\
         \bm{\hat{o}}_{CoM}
@@ -684,7 +690,9 @@ orthogonal to the floor:
     \tensor[^{s'}]{\bm{\hat{p}}}{_{CoM}} = \bm{R}^{T}_{z}(\gamma)(\bm{\hat{p}}_{CoM}-\bm{\hat{p}}_{s})
 \end{equation}
 
-[TODO: USING $\tensor[^{s'}]{\bm{\hat{p}}}{_{CoM}}$ TO CLOSE THE MPC LOOP].
+The position of the CoM $\tensor[^{s'}]{\bm{\hat{p}}}{_{CoM}}$ can be
+used as a reference signal in the MPC in order to generate the gait
+of the humanoid robot.
 
 \section{Regulation}
 Another way to test the correctness of the EKF is to make the robot perform
@@ -825,10 +833,16 @@ from the desired position $(x_g, y_g)^T$ is less than a certain threshold (set
 to $0.2$ in our experiment).
 
 \section{Experiments}
-We tested our implementation doing multiple experiments, trying, first, to improve
-the behaviour of the EKF, and then to check wheather the estimate of the filter
-are useful to be used in the MPC (gait loop closure, TODO: explain better)
-and in the task of posture regulation.
+We tested our EKF implementation doing multiple experiments. Initially, we
+considered only the IMU measurements without achieving convergence. Then,
+we improved the estimate by filtering the linear velocities of the robot,
+correctly localizing it in the environment.
+We equipped the robot with a RGBD testing our trilateration algorithm,
+improving the estimate of the pose of the torso. We made the robot perform
+a cartesian and a posture regulation task using the estimate of the EKF,
+correctly reaching the desired configuration.
+In the end we tried to close the feedback loop in the MPC gait generator
+making the robot move a few steps before falling.
 
 \subsection{Inertial Measurement Unit}
 The first test mainly focused on the integration of the data coming from
@@ -966,15 +980,21 @@ the orientation has been computed using the gyroscope.
 %\end{figure}
 
 \subsection{MPC Loop Closure}
-Todo. Fig. \ref{fig:comp_estimated_torso_com} shows the results obtained
-when using trilateration+gyro.
-Figure \ref{fig:comp_estimated_torso_com} %and \ref{fig:diff_estimated_torso_com}
-for the torso position
-estimate and the CoM. Is there actually a way to use this
-for the MPC loop closure? Note, moreover, that the
-implementation of the MPC is using the position of the
-CoM w.r.t. the reference frame of the support foot, which
-is independent from the pose of the torso.
+Given the estimate of the pose of the torso $\bm{\hat{x}}$ we checked that it
+could be used to estimate correctly also the position of the CoM of the robot
+$\bm{\hat{p}}_{CoM}$ with respect to the world frame (eq.
+\ref{eq:pose-rf-com-world}). The results are shown in Fig.
+\ref{fig:comp_estimated_torso_com}. We then expressed the position of the CoM
+in a rotated reference frame of the support foot $\mathcal{F}_{s'}$,
+as described in section \ref{section:mpc-loop-closure}, without achieving the
+desired behaviour. The robot, in fact, falls after a few steps even when using
+a very low weight\footnote{The weight establishes the importance of the
+estimate with respect to the optimal value.} in the MPC implementation. %This
+%method does not improve the original implementation which considers the
+%position of the CoM expressed in the reference frame of the support foot (just
+%computed with forward kinematics). We think that this is due to the
+%impossibility of approximating the roll and pitch angles of the support foot
+%to $0$ in the C++ implementation of the HRP4 kinematics.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/trilateration_com.png}
@@ -1045,7 +1065,7 @@ possible to see from Fig. \ref{fig:cartesian_regulation_xy}.
 
 The control law defined by Equations
 \ref{eq:cartesian-regulation-control-law-v}-\ref{eq:cartesian-regulation-control-law-w},
-when using gains $k_1=todo$, $k_2=todo$ makes robot stops at the final
+when using gains $k_1=0.07$, $k_2=0.01$ makes robot stops at the final
 configuration $\bm{q}_f = (-1.788, 3.105, 1.562\pi)^T$, near the estimate
 $\bm{\hat{q}}_f = (-1.823, 3.108, 1.562\pi)^T$ and
 near the desired final configuration $\bm{q}_g$. It is interesting to notice
@@ -1125,7 +1145,7 @@ implementation of the MPC.
 
 The behaviour of the EKF could be further improved by fusing the sensors used in
 the project. Moreover, developing a proper VSLAM system could make the robot
-localize in more complex environment, enabling advanced behaviour and increasing
+localize in more complex environment, enabling advanced behaviours and increasing
 the chances of making the MPC work correctly.
 
 %++++++++++++++++++++++++++++++++++++++++
