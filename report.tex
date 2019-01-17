@@ -623,8 +623,7 @@ computation of the direct kinematics.
 
 \section{MPC Loop Closure}
 \label{section:mpc-loop-closure}
-One way to check that the EKF is working properly is to use it to close
-the loop of the MPC gait generator. Given the estimate of the pose of the torso
+Given the estimate of the pose of the torso
 $(\bm{\hat{p}}_t, \bm{\hat{o}}_t)^T$,
 it is possible to obtain the estimate of the pose of the support foot
 $(\bm{\hat{p}}_s, \bm{\hat{o}}_s)^T$ by computing:
@@ -1097,7 +1096,7 @@ and rotating until the desired final orientation is reached.
         described in subsection \ref{subsec:posture_regulation}.
         Here, the measurements of the Kalman filter are obtained
         using the accelerometer and the gyroscope. In green the ground truth of the coordinates $(x, y)$ of the
-        robot, in red the estimate of the EKF. The robot start at the
+        robot, in red the estimate of the EKF, in black the odometry. The robot start at the
         position $\bm{p}_s$ and it stops at the position $\bm{p}_f$. Note that,
         as explained in section \ref{subsec:posture_regulation},
         when $\rho_r < 0.2$, $v$ are $w$ are set to 0.}
@@ -1113,7 +1112,7 @@ and rotating until the desired final orientation is reached.
         Here, the measurements of the Kalman filter are obtained
         using the accelerometer and the gyroscope. In green the ground truth of the coordinate $\theta$ of the
         robot (unicycle), in red the estimate of the EKF (note that they coincide
-        for the whole path). In blue the desired final orientation $\theta_g = \pi$.}
+        for the whole path). In black the odometry, in blue the desired final orientation $\theta_g = \pi$.}
     \label{fig:walk_to_desired_position_yaw}
 \end{figure}
 
@@ -1123,7 +1122,10 @@ when using gains $k_1=0.1$, $k_2=0.007$ and $k_3=0.004$,
 generates the velocities $v$ and $w$ shown in Fig. \ref{fig:unicycle_velocities_posture_regulation}. The robot stops at the final
 configuration $\bm{q}_f = (-1.797, 3.194, 1.024\pi)^T$, near the estimate
 $\bm{\hat{q}}_f = (-1.824, 3.222, 1.024\pi)^T$ and
-near the desired final configuration $\bm{q}_g$.
+near the desired final configuration $\bm{q}_g$. It is interesting to notice
+from the plots how the lack of the correction step (given by the exteroceptive
+sensors) of the Kalman filter, namely the odometry, makes the robot move to a configuration
+$(-1.282, 3.424, 0.912\pi)^T$ which is far away from the desired one.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/unicycle_velocities.png}
