@@ -396,10 +396,10 @@ the linear acceleration $\tensor[^t]{\bm{a}}{_{t,k}}$ expressed in the
 current reference frame of the torso, hence, it must be transformed to the
 reference frame of the world in order be able to perform the integration:
 \begin{equation}
-    \bm{\ddot{p}}_{t,k} = \tensor[^w]{\bm{R}}{_t}(\bm{\hat{x}}_{k}) \tensor[^t]{\bm{a}}{_{t,k}}
+    \bm{\ddot{p}}_{t,k} = \tensor[^w]{\bm{R}}{_t}(\bm{\hat{x}}_{k}) \tensor[^t]{\bm{a}}{_{t,k}} - \bm{g}
 \end{equation}
 
-\noindent with:
+\noindent with $\bm{g} = [0, 0, -g]^T, g = 9.81 \text{m/s}^2$ and with:
 \begin{equation}
     \tensor[^w]{\bm{R}}{_t}(\bm{\hat{x}}_{k}) = \bm{R}_z(\gamma) \bm{R}_y(\beta) \bm{R}_x(\alpha)
 \end{equation}
@@ -742,7 +742,7 @@ will be oriented towards the goal:
     \label{eq:proportional-controller-control-law-v}
     v &= k_1 \left\| \bm{p}_g - \bm{\hat{p}}_t \right\| \\
     \label{eq:proportional-controller-control-law-w}
-    w &= k_2 e_{\theta}
+    \omega &= k_2 e_{\theta}
 \end{align}
 
 \noindent where $\bm{p}_g$ is the desired position, $\bm{\hat{p}}_t$ is
@@ -783,7 +783,7 @@ defined above and consider the following control law:
     \label{eq:cartesian-regulation-control-law-v}
     v &= -k_1 (\tensor[^g]{x}{} \text{cos}(\tensor[^g]{\theta}{}) + \tensor[^g]{y}{} \text{sin}(\tensor[^g]{\theta}{})) \\
     \label{eq:cartesian-regulation-control-law-w}
-    w &=  k_2 (\text{Atan2}(\tensor[^g]{y}{}, \tensor[^g]{x}{}) - \tensor[^g]{\theta}{} + \pi)
+    \omega &=  k_2 (\text{Atan2}(\tensor[^g]{y}{}, \tensor[^g]{x}{}) - \tensor[^g]{\theta}{} + \pi)
 \end{align}
 
 The robot will move to $(0, 0)^T$ in $\mathcal{F}_g$ and hence to the desired
@@ -802,7 +802,7 @@ Let's define the kinematic model of the unicycle using
 polar coordinates:
 \begin{align}
     \dot{\rho}_r &= -v \text{cos}(\gamma_r) \\
-    \dot{\gamma}_r &= \frac{\text{sin}(\gamma_r)}{\rho_r}v - w \\
+    \dot{\gamma}_r &= \frac{\text{sin}(\gamma_r)}{\rho_r}v - \omega \\
     \dot{\delta}_r &= \frac{\text{sin}(\gamma_r)}{\rho_r}v
 \end{align}
 
@@ -1026,7 +1026,7 @@ the oscillation of the humanoid (Fig. \ref{fig:proportional_controller_xy}).
     \centering
     \includegraphics[width=\textwidth]{images/proportional_controller.png}
     \caption{Trajectory followed by the robot when moving to a desired configuration
-        $\bm{q}_g = (-3, 5, \cdot)$ using the proportional controller
+        $\bm{q}_g = (-3, 5, \cdot)^T$ using the proportional controller
         described in subsection \ref{subsec:proportional_controller}.
         Here, the measurements of the Kalman filter are obtained
         using the accelerometer and the gyroscope. In green the ground truth of the coordinates $(x, y)$ of the
@@ -1055,7 +1055,7 @@ possible to see from Fig. \ref{fig:cartesian_regulation_xy}.
     \centering
     \includegraphics[width=\textwidth]{images/cartesian_regulation.png}
     \caption{Trajectory followed by the robot when moving to a desired configuration
-        $\bm{q}_g = (-2, 3.2, \cdot)$ using the cartesian regulation task
+        $\bm{q}_g = (-2, 3.2, \cdot)^T$ using the cartesian regulation task
         described in subsection \ref{subsec:cartesian_regulation}.
         Here, the measurements of the Kalman filter are obtained
         using the accelerometer and the gyroscope. In green the ground truth of the coordinates $(x, y)$ of the
@@ -1107,7 +1107,7 @@ and rotating until the desired final orientation is reached.
     \centering
     \includegraphics[width=\textwidth]{images/yaw_postureregulation.png}
     \caption{Orientation followed by the robot when moving to a desired configuration
-        $\bm{q}_g = (-2, 3.2, \pi)$ while performing the posture regulation task
+        $\bm{q}_g = (-2, 3.2, \pi)^T$ while performing the posture regulation task
         described in subsection \ref{subsec:posture_regulation}.
         Here, the measurements of the Kalman filter are obtained
         using the accelerometer and the gyroscope. In green the ground truth of the coordinate $\theta$ of the
@@ -1135,7 +1135,7 @@ $(-1.282, 3.424, 0.912\pi)^T$ which is far away from the desired one.
     \label{fig:unicycle_velocities_posture_regulation}
 \end{figure}
 
-\section{Conclusions}
+\section{Conclusion}
 In this project we developed an Extended Kalman Filter to localize the HRP4
 humanoid robot in a V-REP environment. We equipped the robot with a gyroscope,
 an accelerometer and a RGBD camera, considering different approaches in order
