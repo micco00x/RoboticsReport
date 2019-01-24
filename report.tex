@@ -396,10 +396,10 @@ the linear acceleration $\tensor[^t]{\bm{a}}{_{t,k}}$ expressed in the
 current reference frame of the torso, hence, it must be transformed to the
 reference frame of the world in order be able to perform the integration:
 \begin{equation}
-    \bm{\ddot{p}}_{t,k} = \tensor[^w]{\bm{R}}{_t}(\bm{\hat{x}}_{k}) \tensor[^t]{\bm{a}}{_{t,k}} - \bm{g}
+    \bm{\ddot{p}}_{t,k} = \tensor[^w]{\bm{R}}{_t}(\bm{\hat{x}}_{k}) \tensor[^t]{\bm{a}}{_{t,k}} + \bm{g}
 \end{equation}
 
-\noindent with $\bm{g} = [0, 0, g]^T, g = 9.81 \text{m/s}^2$ and with:
+\noindent with $\bm{g} = [0, 0, -g]^T, g = 9.81 \text{m/s}^2$ and with:
 \begin{equation}
     \tensor[^w]{\bm{R}}{_t}(\bm{\hat{x}}_{k}) = \bm{R}_z(\gamma) \bm{R}_y(\beta) \bm{R}_x(\alpha)
 \end{equation}
