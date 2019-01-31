@@ -426,20 +426,19 @@ velocity in an interval $[t_k, t_{k+1})$:
 Note that the implementation of the gyroscope returns, at each
 timestep $k$, the angular velocity
 $\tensor[^t]{\bm{\omega}}{_{t,k}}$ expressed in the current
-reference frame of the torso, hence, it must be transformed to
-the reference frame of the world in order to be able to perform the
-integration:
+reference frame of the torso, hence, it must be related to $\bm{\dot{o}}_{t,k}$
+in order to be able to perform the integration:
 \begin{equation}
     \bm{\dot{o}}_{t,k} = \bm{T}(\bm{\hat{x}}_{k}) \tensor[^t]{\bm{\omega}}{_{t,k}}
 \end{equation}
 
-\noindent with:
+\noindent with \cite{DBLP:conf/smc/LeeBDSXT09}:
 \begin{equation}
     \bm{T}(\bm{\hat{x}}_{k}) =
     \begin{pmatrix}
-        \text{cos}(\gamma)/\text{cos}(\beta) & \text{sin}(\gamma)/\text{cos}(\beta) & 0 \\
-        -\text{sin}(\gamma) &  \text{cos}(\gamma) & 0 \\
-        \text{cos}(\gamma) \text{tan}(\beta) & \text{sin}(\gamma) \text{tan}(\beta) & 1
+        1 & \text{sin}(\alpha) \text{tan}(\beta) & \text{cos}(\alpha) \text{tan}(\beta) \\
+		0 & \text{cos}(\alpha) & -\text{sin}(\alpha) \\
+		0 & \text{sin}(\alpha)/\text{cos}(\beta) & \text{cos}(\alpha)/\text{cos}(\beta)
     \end{pmatrix}
 \end{equation}
 
@@ -457,8 +456,8 @@ integration:
 %    \end{pmatrix}
 %\end{equation}
 
-\noindent where $\beta$ and $\gamma$ are, respectively,
-the pitch and the yaw angles of $\bm{\hat{x}}_{k}$.
+\noindent where $\alpha$ and $\beta$ are, respectively,
+the roll and the pitch angles of $\bm{\hat{x}}_{k}$.
 %\noindent where $\tensor[^w]{\bm{R}}{_t}(\bm{\hat{x}}_{k+1|k})$ represents
 %the rotation matrix
 %from the reference frame of the torso to the reference frame
