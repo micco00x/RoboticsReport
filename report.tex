@@ -659,8 +659,8 @@ following way:
     \end{pmatrix}\right]^{-1}
 \end{equation}
 
-At this point it is possible to compute the position the estimate of a
-reference frame attached to the CoM by computing:
+At this point it is possible to compute the pose of the estimate of the
+reference frame attached to the CoM:
 \begin{equation}
     \label{eq:pose-rf-com-world}
     \begin{pmatrix}
@@ -850,10 +850,10 @@ the accelerometer and the gyroscope (IMU). Considering the EKF described in
 subsection \ref{subsec:ekf}, we defined the measurement function (Eq.
 \ref{eq:ekf-observation-function}) at each timestep $k$ as:
 \begin{equation}
-    \bm{y}_k = \bm{h}(\bm{\hat{x}}_k, \bm{q}_{n, k}) =
+    \bm{y}_k = \bm{h}(\bm{x}_k, \bm{q}_{n, k}) =
         \begin{pmatrix}
-            \bm{\hat{p}}_{t, k} \\
-            \bm{\hat{o}}_{t, k}
+            \bm{p}_{t, k} \\
+            \bm{o}_{t, k}
         \end{pmatrix}
 \end{equation}
 
@@ -894,7 +894,7 @@ two successive timesteps, which are already filtered:
 \end{equation}
 
 This approximation, which has been used in Eq.
-\ref{eq:position-accelerometer-integration} in our implementation,,
+\ref{eq:position-accelerometer-integration} in our implementation,
 improves the previous results
 (Fig. \ref{fig:comp_ground_truth_estimated_torso_accelerometer_prevlinearvelocity}),
 estimating correctly the coordinates $(x, y)^T$
@@ -988,8 +988,9 @@ The results are shown in Fig.
 \ref{fig:comp_estimated_torso_com}.
 
 We then expressed the position of the CoM
-in a rotated reference frame of the support foot $\mathcal{F}_{s'}$,
-as described in section \ref{section:mpc-loop-closure}, without achieving the
+in a rotated reference frame of the support foot $\mathcal{F}_{s'}$
+(as described in section \ref{section:mpc-loop-closure}) using it as a reference
+signal for the MPC, without achieving the
 desired behaviour. The robot, in fact, falls after a few steps even when using
 a very low weight\footnote{The weight establishes the importance of the
 estimate with respect to the optimal value.} in the MPC implementation. %This
