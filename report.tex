@@ -534,7 +534,7 @@ obtain the distance from the camera to each sphere $i$ by computing:
             \tensor[^{cam}]{y}{_i} \\
             \tensor[^{cam}]{z}{_i}
         \end{pmatrix}
-    }^2 + \bar{r} \quad (i = 1, 2, \dots, n)
+    } + \bar{r} \quad (i = 1, 2, \dots, n)
 \end{equation}
 
 \noindent where the subscript $i$ specifies the index of the
@@ -682,12 +682,12 @@ Note that these steps are necessary since, as before, in the C++ framework of th
 HRP4 it is not possible to directly express a reference frame attached to the CoM with
 respect to the torso.
 
-Given $\bm{\hat{p}}_{s}$, $\bm{\hat{p}}_{CoM}$ and the yaw angle $\gamma$ of
-$\bm{\hat{x}}$, it is possible to express the position of the CoM in a rotated
+Given $\bm{\hat{p}}_{s}$, $\bm{\hat{p}}_{CoM}$ and the yaw angle $\gamma_s$ of
+$\bm{\hat{o}}_s$, it is possible to express the position of the CoM in a rotated
 reference frame of the support foot $\mathcal{F}_{s'}$ which has the $z$-axis
 orthogonal to the floor:
 \begin{equation}
-    \tensor[^{s'}]{\bm{\hat{p}}}{_{CoM}} = \bm{R}^{T}_{z}(\gamma)(\bm{\hat{p}}_{CoM}-\bm{\hat{p}}_{s})
+    \tensor[^{s'}]{\bm{\hat{p}}}{_{CoM}} = \bm{R}^{T}_{z}(\gamma_s)(\bm{\hat{p}}_{CoM}-\bm{\hat{p}}_{s})
 \end{equation}
 
 The position of the CoM $\tensor[^{s'}]{\bm{\hat{p}}}{_{CoM}}$ can be
