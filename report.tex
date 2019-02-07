@@ -865,7 +865,7 @@ to see from the plots, while the orientation has good results, the estimates of
 the position are not converging to the real value.
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{images/accelerometer.png}
+    \includegraphics[width=\textwidth]{images/accelerometer}
     \caption{Comparison between the ground truth (in green) and the estimate (in red) of the torso
         pose when using a double integrator on the data of the accelerometer
         and the gyroscope. $x$, $y$, $z$ stands for the position
@@ -904,7 +904,7 @@ This suggests that another approach is needed
 in order to further improve the estimate.
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{images/accelerometer_prev_linearvelocity.png}
+    \includegraphics[width=\textwidth]{images/accelerometer_prev_linearvelocity}
     \caption{Comparison between the ground truth (in green) and the estimate (in red) of the torso
         pose when using a double integrator on the data of the accelerometer
         and the gyroscope. Here the velocity is approximated with the velocity
@@ -954,7 +954,7 @@ the orientation has been computed using the gyroscope.
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{images/trilateration.png}
+    \includegraphics[width=\textwidth]{images/trilateration}
     \caption{Comparison between the pose of the torso estimated
         with the EKF (in red) with respect to the ground
         truth (in green) when using trilateration and the data coming
@@ -1001,7 +1001,7 @@ estimate with respect to the optimal value.} in the MPC implementation. %This
 %to $0$ in the C++ implementation of the HRP4 kinematics.
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{images/trilateration_com.png}
+    \includegraphics[width=\textwidth]{images/trilateration_com}
     \caption{Comparison between the estimate of the position of the CoM
         obtained with the EKF (in red) and the ground truth of the CoM
         (in green) when using trilateration and the gyroscope.
@@ -1025,7 +1025,7 @@ in order to avoid problems due to
 the oscillation of the humanoid (Fig. \ref{fig:proportional_controller_xy}).
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{images/proportional_controller.png}
+    \includegraphics[width=\textwidth]{images/proportional_controller}
     \caption{Trajectory followed by the robot when moving to a desired configuration
         $\bm{q}_g = (-3, 5, \cdot)^T$ using the proportional controller
         described in subsection \ref{subsec:proportional_controller}.
@@ -1054,7 +1054,7 @@ making it stop when $\left\|\bm{p}_g - \bm{\hat{p}}_t \right\| < 0.2$ as it is
 possible to see from Fig. \ref{fig:cartesian_regulation_xy}.
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{images/cartesian_regulation.png}
+    \includegraphics[width=\textwidth]{images/cartesian_regulation}
     \caption{Trajectory followed by the robot when moving to a desired configuration
         $\bm{q}_g = (-2, 3.2, \cdot)^T$ using the cartesian regulation task
         described in subsection \ref{subsec:cartesian_regulation}.
@@ -1091,7 +1091,7 @@ backward (keeping the same orientation) and then by simultaneously moving forwar
 and rotating until the desired final orientation is reached.
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{images/posture_regulation.png}
+    \includegraphics[width=\textwidth]{images/posture_regulation}
     \caption{Trajectory followed by the robot when moving to a desired configuration
         $\bm{q}_g = (-2, 3.2, \pi)$ while performing the posture regulation task
         described in subsection \ref{subsec:posture_regulation}.
@@ -1106,7 +1106,7 @@ and rotating until the desired final orientation is reached.
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{images/yaw_postureregulation.png}
+    \includegraphics[width=\textwidth]{images/yaw_postureregulation}
     \caption{Orientation followed by the robot when moving to a desired configuration
         $\bm{q}_g = (-2, 3.2, \pi)^T$ while performing the posture regulation task
         described in subsection \ref{subsec:posture_regulation}.
@@ -1129,7 +1129,7 @@ sensors) of the Kalman filter, namely the odometry, makes the robot move to a co
 $(-1.282, 3.424, 0.912\pi)^T$ which is far away from the desired one.
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{images/unicycle_velocities.png}
+    \includegraphics[width=\textwidth]{images/unicycle_velocities}
     \caption{Linear and angular velocity of the HRP4 while performing the
         posture regulation task described in subsection \ref{subsec:posture_regulation}.
         Note that when $\rho_r < 0.2$, $v$ are $w$ are set to 0.}
