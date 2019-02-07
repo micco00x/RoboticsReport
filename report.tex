@@ -132,7 +132,7 @@ as measurements, obtaining good results on the estimate of the orientation but
 diverging results on the position. We then improved the EKF by filtering the
 linear velocities of the torso (previously obtained by integrating the linear
 acceleration read by the accelerometer sensor) obtaining convergence on the
-$x$, $y$ axes and reducing the error on the $z$ axis. The introduction of the
+$x$, $y$ axes. The introduction of the
 RGBD camera, less susceptible to noise and drift, further improved the
 estimate of the position of the torso, obtaining convergence on the $z$
 axis as well. In this last step we used the trilateration algorithm.
@@ -147,6 +147,7 @@ MPC gait generator obtaining unsuccessful results.
 The project has been entirely developed in C++ using the HRP4 humanoid robot
 model in a V-REP environment.
 
+\clearpage
 \section{Torso Pose Estimation}
 This section introduces the kinematic model used for the Extended Kalman Filter,
 describing in details its whole implementation and the different methods used
@@ -159,7 +160,7 @@ develop a filter that estimates the state $\bm{x}$ while
 it moves around the environment. Let $\mathcal{F}_s$ be the
 support foot frame with respect to the world frame and let
 $\bm{o}_s$ be its orientation.
-Let $\bm{J}(\bm{q}_s, \bm{o}_s)$ the Jacobian
+Let $\bm{J}(\bm{q}_s, \bm{o}_s)$ be the Jacobian
 matrix of the kinematic map from the support frame
 $\mathcal{F}_s$ to the torso frame $\mathcal{F}_t$.
 Let's use the following kinematic model to describe the
@@ -897,11 +898,9 @@ This approximation, which has been used in Eq.
 \ref{eq:position-accelerometer-integration} in our implementation,
 improves the previous results
 (Fig. \ref{fig:comp_ground_truth_estimated_torso_accelerometer_prevlinearvelocity}),
-estimating correctly the coordinates $(x, y)^T$
-and reducing the error on $z$. Even if the error on $z$ has been improved, it
-does not seem to be converging like the other two coordinates.
-This suggests that another approach is needed
-in order to further improve the estimate.
+estimating correctly the coordinates $(x, y)^T$.
+Since the error on the $z$ axis does not converge,
+another approach is needed in order to further improve the estimate.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/accelerometer_prev_linearvelocity}
@@ -1070,7 +1069,7 @@ possible to see from Fig. \ref{fig:cartesian_regulation_xy}.
 The control law defined by Equations
 \ref{eq:cartesian-regulation-control-law-v}-\ref{eq:cartesian-regulation-control-law-w},
 when using gains $k_1=0.07$, $k_2=0.01$ makes robot stops at the final
-configuration $\bm{q}_f = (-1.788, 3.105, 1.562\pi)^T$, near the estimate
+configuration \mbox{$\bm{q}_f = (-1.788, 3.105, 1.562\pi)^T$}, near the estimate
 $\bm{\hat{q}}_f = (-1.823, 3.108, 1.562\pi)^T$ and
 near the desired final configuration $\bm{q}_g$. It is interesting to notice
 that the robot starts oscillating on the spot when it reaches a configuration
@@ -1136,6 +1135,7 @@ $(-1.282, 3.424, 0.912\pi)^T$ which is far away from the desired one.
     \label{fig:unicycle_velocities_posture_regulation}
 \end{figure}
 
+\clearpage
 \section{Conclusion}
 In this project we developed an Extended Kalman Filter to localize the HRP4
 humanoid robot in a V-REP environment. We equipped the robot with a gyroscope,
